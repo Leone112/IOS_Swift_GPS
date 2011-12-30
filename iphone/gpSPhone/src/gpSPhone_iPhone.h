@@ -22,6 +22,8 @@
 #import <CoreSurface/CoreSurface.h>
 #import <AudioToolbox/AudioQueue.h>
 
+#import "Availability.h"
+
 #define BIT_U			0x1
 #define BIT_D			0x10
 #define BIT_L 			0x4
