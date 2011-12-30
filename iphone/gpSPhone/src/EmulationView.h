@@ -18,7 +18,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <UIKit/UIHardware.h>
 
 #import "ControllerView.h"
 #import "ScreenView.h"

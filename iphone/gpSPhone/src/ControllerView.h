@@ -19,7 +19,6 @@
 #import <Foundation/Foundation.h>
 #import <GraphicsServices/GraphicsServices.h>
 #import <UIKit/UIKit.h>
-#import <UIKit/UIView-Geometry.h>
 #import "ScreenView.h"
 #import "gpSPhone_iPhone.h"
 
