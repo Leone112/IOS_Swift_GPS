@@ -18,12 +18,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <UIKit/UITransitionView.h>
-#import <UIKit/UIPreferencesTable.h>
-#import <UIKit/UISegmentedControl.h>
-#import <UIKit/UISwitchControl.h>
-#import <UIKit/UIPreferencesTextTableCell.h>
-#import <UIKit/UIButtonBar.h>
+
 #import "FileBrowser.h"
 #import "EmulationView.h"
 
@@ -65,38 +60,38 @@ extern void gotoMenu();
          UISegmentedControl *palControl;
          UISegmentedControl *cpuControl;
 		 UISegmentedControl *volumeControl;
-         UISwitchControl *sensoryControl;
-	 UISwitchControl *scaledControl;
-	UISwitchControl *cheatControl;
-	UISwitchControl *cheat1Control;
-	UISwitchControl *cheat2Control;
-	UISwitchControl *cheat3Control;
-	UISwitchControl *cheat4Control;
-	UISwitchControl *cheat5Control;
-	UISwitchControl *cheat6Control;
-	UISwitchControl *cheat7Control;
-	UISwitchControl *cheat8Control;
+         UISwitch *sensoryControl;
+	 UISwitch *scaledControl;
+	UISwitch *cheatControl;
+	UISwitch *cheat1Control;
+	UISwitch *cheat2Control;
+	UISwitch *cheat3Control;
+	UISwitch *cheat4Control;
+	UISwitch *cheat5Control;
+	UISwitch *cheat6Control;
+	UISwitch *cheat7Control;
+	UISwitch *cheat8Control;
 	
-	 UISwitchControl *mutedControl;
+	 UISwitch *mutedControl;
 #ifdef DEBUG
-         UISwitchControl *debugControl;
+         UISwitch *debugControl;
 #endif
-         UISwitchControl *landscapeControl;
-         UISwitchControl *delromsControl;
-         UISwitchControl *autosaveControl;
-         UISwitchControl *gamegenieControl;
-         UISwitchControl *enlargeControl;
-         UISwitchControl *suspendControl;
-         UISwitchControl *bassControl;
+         UISwitch *landscapeControl;
+         UISwitch *delromsControl;
+         UISwitch *autosaveControl;
+         UISwitch *gamegenieControl;
+         UISwitch *enlargeControl;
+         UISwitch *suspendControl;
+         UISwitch *bassControl;
          UISegmentedControl *spkControl;
          BOOL allowDeleteROMs;
          NSString *versionString;
          UIWindow *parentWindow;
 
-         UIAlertSheet *badROMSheet;
-         UIAlertSheet *saveStateSheet;
-         UIAlertSheet *selectROMSheet;
-         UIAlertSheet *supportSheet;
+         UIActionSheet *badROMSheet;
+         UIActionSheet *saveStateSheet;
+         UIActionSheet *selectROMSheet;
+         UIActionSheet *supportSheet;
 }
 
 - (id)initWithFrame:(CGRect)frame;

@@ -943,21 +943,21 @@ void gotoMenu()
           switch (row) {
              case (0):
                 [ cell setTitle:@"Auto-Save Game" ];
-                autosaveControl = [[UISwitchControl alloc]
+                autosaveControl = [[UISwitch alloc]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ autosaveControl setValue: preferences.autoSave ];
                 [ cell  addSubview:autosaveControl ];
                 break;
             case (1):
                 [ cell setTitle:@"Landscape View" ];
-				landscapeControl = [ [ UISwitchControl alloc ]
+				landscapeControl = [ [ UISwitch alloc ]
 					initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ landscapeControl setValue: preferences.landscape ];
                 [ cell addSubview:landscapeControl ];
                 break;
             case (2):
                 [ cell setTitle:@"Mute Sound" ];
-                mutedControl = [ [ UISwitchControl alloc ]
+                mutedControl = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ mutedControl setValue: preferences.muted ];
                 [ cell addSubview: mutedControl ];
@@ -979,7 +979,7 @@ void gotoMenu()
                 break;
             case (1):
                 [ cell setTitle:@"Can Delete ROMs" ];
-                delromsControl = [[UISwitchControl alloc]
+                delromsControl = [[UISwitch alloc]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ delromsControl setAlternateColors: YES ];
                 [ delromsControl setValue: preferences.canDeleteROMs ];
@@ -992,70 +992,70 @@ void gotoMenu()
                 break;
             case (3):
                 [ cell setTitle:@"Enable Scaling" ];
-				scaledControl = [ [ UISwitchControl alloc ]
+				scaledControl = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ scaledControl setValue: preferences.scaled ];
                 [ cell addSubview:scaledControl ];
                 break;
             case (4):
                 [ cell setTitle:@"Enable Cheating" ];
-				cheatControl = [ [ UISwitchControl alloc ]
+				cheatControl = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ cheatControl setValue: preferences.cheating ];
                 [ cell addSubview:cheatControl ];
                 break;
             case (5):
                 [ cell setTitle:@"Enable Cheat 1" ];
-				cheat1Control = [ [ UISwitchControl alloc ]
+				cheat1Control = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ cheat1Control setValue: preferences.cheat1 ];
                 [ cell addSubview:cheat1Control ];
                 break;
             case (6):
                 [ cell setTitle:@"Enable Cheat 2" ];
-				cheat2Control = [ [ UISwitchControl alloc ]
+				cheat2Control = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ cheat2Control setValue: preferences.cheat2 ];
                 [ cell addSubview:cheat2Control ];
                 break;
             case (7):
                 [ cell setTitle:@"Enable Cheat 3" ];
-				cheat3Control = [ [ UISwitchControl alloc ]
+				cheat3Control = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ cheat3Control setValue: preferences.cheat3 ];
                 [ cell addSubview:cheat3Control ];
                 break;
             case (8):
                 [ cell setTitle:@"Enable Cheat 4" ];
-				cheat4Control = [ [ UISwitchControl alloc ]
+				cheat4Control = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ cheat4Control setValue: preferences.cheat4 ];
                 [ cell addSubview:cheat4Control ];
                 break;
             case (9):
                 [ cell setTitle:@"Enable Cheat 5" ];
-				cheat5Control = [ [ UISwitchControl alloc ]
+				cheat5Control = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ cheat5Control setValue: preferences.cheat5 ];
                 [ cell addSubview:cheat5Control ];
                 break;
             case (10):
                 [ cell setTitle:@"Enable Cheat 6" ];
-				cheat6Control = [ [ UISwitchControl alloc ]
+				cheat6Control = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ cheat6Control setValue: preferences.cheat6 ];
                 [ cell addSubview:cheat6Control ];
                 break;
             case (11):
                 [ cell setTitle:@"Enable Cheat 7" ];
-				cheat7Control = [ [ UISwitchControl alloc ]
+				cheat7Control = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ cheat7Control setValue: preferences.cheat7 ];
                 [ cell addSubview:cheat7Control ];
                 break;
             case (12):
                 [ cell setTitle:@"Enable Cheat 8" ];
-				cheat8Control = [ [ UISwitchControl alloc ]
+				cheat8Control = [ [ UISwitch alloc ]
                 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ cheat8Control setValue: preferences.cheat8 ];
                 [ cell addSubview:cheat8Control ];
@@ -1063,7 +1063,7 @@ void gotoMenu()
 #ifdef DEBUG
             case (13):
                 [ cell setTitle:@"Debug Mode" ];
-                debugControl = [[UISwitchControl alloc]
+                debugControl = [[UISwitch alloc]
                     initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
                 [ debugControl setValue: preferences.debug ];
                 [ debugControl setAlternateColors: YES ];
