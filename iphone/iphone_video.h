@@ -28,11 +28,11 @@
 #define _IPHONE_VIDEO__H
 
 #import <UIKit/UIKit.h>
-#import <UIKit/UIView-Geometry.h>
+
 #import <GraphicsServices/GraphicsServices.h>
 #import <Foundation/Foundation.h>
-#import <CoreSurface/CoreSurface.h>
-#import <LayerKit/LKLayer.h>
+
+#import "CoreSurface.h"
 
 
 @interface iPhoneView : UIView

@@ -17,8 +17,7 @@
 */
 
 #import <GraphicsServices/GraphicsServices.h>
-#import <UIKit/UIView-Geometry.h>
-#import <CoreSurface/CoreSurface.h>
+
 #import "ScreenView.h"
 #import "gpSPhone_iPhone.h"
 

@@ -18,7 +18,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <CoreSurface/CoreSurface.h>
+
+#import "CoreSurface.h"
+
 #include <pthread.h>
 
 extern CoreSurfaceBufferRef screenSurface;

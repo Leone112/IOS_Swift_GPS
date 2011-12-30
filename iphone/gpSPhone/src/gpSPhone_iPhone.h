@@ -19,7 +19,7 @@
 #ifndef GPSPHONE_IPHONE_H
 #define GPSPHONE_IPHONE_H
 
-#import <CoreSurface/CoreSurface.h>
+#import "CoreSurface.h"
 #import <AudioToolbox/AudioQueue.h>
 
 #import "Availability.h"
