@@ -102,7 +102,7 @@ void updateScreen() {
     CoreSurfaceBufferLock(screenSurface, 3);
 
     LOGDEBUG("ScreenView.initGraphics(): Creating screen layer");
-    screenLayer = [[LKLayer layer] retain];
+    screenLayer = [[CALayer layer] retain];
     if(preferences.landscape)
     {
 		CGRect FullContentBounds;

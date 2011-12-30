@@ -19,7 +19,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <CoreSurface/CoreSurface.h>
-#import <LayerKit/LKLayer.h>
 #include <pthread.h>
 
 extern CoreSurfaceBufferRef screenSurface;
@@ -28,7 +27,7 @@ extern CoreSurfaceBufferRef screenSurface;
 {
 	NSTimer *timer;
     CGRect rect;
-    LKLayer *screenLayer;
+    CALayer *screenLayer;
 }
 
 - (id)initWithFrame:(CGRect)frame;
