@@ -49,7 +49,7 @@
 
 #include <IOKit/IOKitLib.h>
 #include <IOKit/serial/IOSerialKeys.h>
-#if defined(MAC_OS_X_VERSION_10_3) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_3)
+#if !defined(__IPHONE_2_0) && defined(MAC_OS_X_VERSION_10_3) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_3)
 #include <IOKit/serial/ioss.h>
 #endif
 #include <IOKit/IOBSD.h>
@@ -222,7 +222,7 @@ static int OpenSerialPort(const char *bsdPath)
 						CCTS_OFLOW | 	// CTS flow control of output
 						CRTS_IFLOW);	// RTS flow control of input
 */			
-#if defined(MAC_OS_X_VERSION_10_4) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4)
+#if !defined(__IPHONE_2_0) && defined(MAC_OS_X_VERSION_10_4) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4)
 	// Starting with Tiger, the IOSSIOSPEED ioctl can be used to set arbitrary baud rates
 	// other than those specified by POSIX. The driver for the underlying serial hardware
 	// ultimately determines which baud rates can be used. This ioctl sets both the input
@@ -287,7 +287,7 @@ static int OpenSerialPort(const char *bsdPath)
     
     printf("Handshake lines currently set to %d\n", handshake);
 	
-#if defined(MAC_OS_X_VERSION_10_3) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_3)
+#if !defined(__IPHONE_2_0) && defined(MAC_OS_X_VERSION_10_3) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_3)
 	unsigned long mics = 1UL;
 
 	// Set the receive latency in microseconds. Serial drivers use this value to determine how often to
