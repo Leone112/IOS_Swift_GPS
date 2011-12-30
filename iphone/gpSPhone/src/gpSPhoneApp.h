@@ -17,10 +17,8 @@
 */
 
 #import <Foundation/Foundation.h>
-#import <GraphicsServices/GraphicsServices.h>
 #import <UIKit/UIKit.h>
-#import <UIKit/UIAlertSheet.h>
-#import <Celestial/AVSystemController.h>
+#import <UIKit/UIAlert.h>
 #import "MainView.h"
 #import "gpSPhone_iPhone.h"
 
@@ -32,19 +30,12 @@
 
 extern float __audioVolume;
 
-@interface gpSPhoneApp : UIApplication
+@interface gpSPhoneApp : UIApplication <UIApplicationDelegate>
 {
     UIWindow *window;
 
-    AVSystemController  *avs;
     NSString *audioDeviceName;
-    UIAlertSheet *feedMeSheet;
+
     int screenOrientation;
 }
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
-- (void)applicationWillTerminate;
-- (void)applicationWillSuspendForEventsOnly;
-- (void)applicationSuspend:(struct __GSEvent *)event;
-
 @end

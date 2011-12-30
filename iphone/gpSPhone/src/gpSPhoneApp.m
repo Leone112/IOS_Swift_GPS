@@ -30,34 +30,32 @@ MainView *mainView;
     struct CGRect rect;
     bool hasROMs = 0;
 
-    [ UIHardware _setStatusBarHeight: 0.0f ];
-    [ self setStatusBarMode: 2 duration: 0 ];
+	[ [ UIApplication sharedApplication ] setStatusBarHidden:YES ];
 
     gpSPhone_LoadPreferences();
  
-    LOGDEBUG("gpSPhone.applicationDidFinishLaunching()");
+    rect = [ [ UIScreen mainScreen ] applicationFrame ];
+    window = [ [ UIWindow alloc ] initWithFrame: rect ];
 
-    rect = [ UIHardware fullScreenApplicationContentRect ];
-    window = [ [ UIWindow alloc ] initWithContentRect: rect ];
-
-    rect = [ UIHardware fullScreenApplicationContentRect ];
-    rect.origin.x = rect.origin.y = 0.0f;
+    rect.origin = CGPointZero;
 
     mainView = [ [ MainView alloc ] initWithFrame: rect ];
 
-    [ window setContentView: mainView ];
-    [ window orderFront: self ];
-    [ window makeKey: self ];
-    [ window _setHidden: NO ];
+    [ window addSubview: mainView ];
+    [ window makeKeyAndVisible ];
 
-    avs = [ AVSystemController sharedAVSystemController ];
-    [ avs getActiveCategoryVolume: &__audioVolume andName: &audioDeviceName ];
-    LOGDEBUG("Initializing volume: %f", __audioVolume);
+	noteCurrentSystemVolume(self);
 
-    [ [ NSNotificationCenter defaultCenter ] addObserver: self 
-        selector:@selector(volumeChange:) 
-        name: @"AVSystemController_SystemVolumeDidChangeNotification"
-        object: avs ];
+	AudioSessionInitialize(NULL, NULL, NULL, NULL);
+	OSStatus status = AudioSessionAddPropertyListener(kAudioSessionProperty_CurrentHardwareOutputVolume, noteCurrentSystemVolume, self);
+	if (!status)
+	{
+		// failure
+	}
+	else
+	{
+		AudioSessionSetActive(true);
+	}
 
     /* Determine if we have any ROMs */
     NSDirectoryEnumerator *dirEnum;
@@ -80,7 +78,7 @@ MainView *mainView;
     } 
     else 
     {
-		UIAlertSheet *noROMSheet = [ [ UIAlertSheet alloc ] initWithFrame:
+		UIActionSheet *noROMSheet = [ [ UIActionSheet alloc ] initWithFrame:
 			CGRectMake(0, 240, 320, 240) ];
 		[ noROMSheet setTitle:@"No ROMs Found" ];
 		[ noROMSheet setBodyText: [ NSString stringWithFormat: 
@@ -106,114 +104,29 @@ MainView *mainView;
 	   unlink("/var/root/Library/Preferences/gpSPhone.v1");
 	   unlink("/var/mobile/Library/Preferences/gpSPhone.v1");
 	   gpSPhone_LoadPreferences();
-           feedMeSheet = [ [ UIAlertSheet alloc ] initWithFrame:
-                CGRectMake(0, 240, 320, 240) ];
-            [ feedMeSheet setTitle:@"Please Consider Donating" ];
-            [ feedMeSheet setBodyText: [ NSString stringWithFormat:@"Countless hours went into developing and improving gpSPhone. If you enjoy using it, please consider sending a donation via PayPal to heirloomer@pobox.com. Thanks from www.zodttd.com!\n\n(This message will not appear again)" ] ];
-            [ feedMeSheet addButtonWithTitle:@"OK" ];
-            [ feedMeSheet setDelegate: self ];
-            [ feedMeSheet presentSheetInView: mainView ];
         }
     }
 }
 
-- (void)applicationWillTerminate {
-    LOGDEBUG("gpSPhoneApp.applicationWillTerminate()");
-
-    [ mainView release ];
-    [ window release ];
-
-    LOGDEBUG("gpSPhoneApp.applicationWillTerminate(): Exiting");
-}
-
-- (void)alertSheet:(UIAlertSheet *)sheet buttonClicked:(int)button {
-    [ sheet dismiss ];
-
-    /* Initialize first time use */
-
-    if (sheet == feedMeSheet) {
-        FILE *f = fopen_home(INIT_PATH, "w");
-        if (f) { fprintf(f, "%s", VERSION); fclose(f); }
-
-        /* Install Status Bar Icons */
-        struct stat s;
-        if (!stat("/Applications/gpSPhone.app/FSO_NES.png", &s)) {
-            unsigned char *d = malloc(s.st_size);
-            if (d) {
-                f = fopen("/Applications/gpSPhone.app/FSO_NES.png", "rb");
-                if (f) {
-                    fread(d, s.st_size, 1, f);
-                    fclose(f);
-                    f = fopen("/System/Library/CoreServices/SpringBoard.app/FSO_NES.png", "wb");
-                    if (f) {
-                        fwrite(d, s.st_size, 1, f);
-                        fclose(f);
-                    }
-                }
-               free(d);
-            }
-        }
-
-        if (!stat("/Applications/gpSPhone.app/Default_NES.png", &s)) {
-            unsigned char *d = malloc(s.st_size);
-            if (d) {
-                f = fopen("/Applications/gpSPhone.app/Default_NES.png", "rb");
-                if (f) {
-                    fread(d, s.st_size, 1, f);
-                    fclose(f);
-                    f = fopen("/System/Library/CoreServices/SpringBoard.app/Default_NES.png", "wb");
-                    if (f) {
-                        fwrite(d, s.st_size, 1, f);
-                        fclose(f);
-                    }
-                }
-               free(d);
-            }   
-        }
-        [ mainView reloadButtonBar ];
-    } else {
-        [ self terminate ];
-    }
-    return;
-}
-
-- (void)applicationDidResume {
-    LOGDEBUG("gpSPhoneApp.applicationDidResume()");
-    //[ window release ];
-    [ UIHardware _setStatusBarHeight: 0.0f ];
-    [ self setStatusBarMode: 2 duration: 0 ];
-
-    UIWindow * newWindow = [ [ UIWindow alloc ] initWithContentRect:
-                     [ UIHardware fullScreenApplicationContentRect ]
-    ];
-
-    [ newWindow setContentView: mainView];
-    [ newWindow orderFront: self];
-    [ newWindow makeKey: self];
-    [ newWindow _setHidden: NO];
-
-    [ window _setHidden: YES];
-    window = newWindow;
-
+- (void)applicationWillEnterForeground:(UIApplication *)application {
     if ([ mainView getCurrentView ] == CUR_EMULATOR_SUSPEND) 
         [ mainView resumeEmulator ];
 }
 
-- (void)applicationSuspend:(struct __GSEvent *)event {
+- (void)applicationWillTerminate:(UIApplication *)application {
 
-    LOGDEBUG("gpSPhoneApp.applicationSuspend()");
+    LOGDEBUG("gpSPhoneApp.applicationDidEnterBackground");
 
     if([ mainView getCurrentView ] != CUR_EMULATOR_SUSPEND)
     {
 	    gpSPhone_CloseSound();
 	    [ mainView stopEmulator: NO ];
 	    [ mainView savePreferences ];
-	    [ self terminate ];
     }
 }
 
-- (void)applicationWillSuspendForEventsOnly {
-    LOGDEBUG("gpSPhoneApp.applicationWillSuspendForEventsOnly()");
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    LOGDEBUG("gpSPhoneApp.applicationDidEnterBackground()");
 
     [ mainView savePreferences ];
     if([mainView getCurrentView] == CUR_EMULATOR) 
@@ -221,10 +134,14 @@ MainView *mainView;
     [ self suspendWithAnimation: NO ];
 }
 
-- (void)volumeChange:(NSNotification *)notification {
-    AVSystemController *newav = [ notification object ];
-    [ newav getActiveCategoryVolume:&__audioVolume andName:&audioDeviceName ];
-    LOGDEBUG("gpSPhoneApp.volumeChange(): %f", __audioVolume);
-}
+static void noteCurrentSystemVolume(void *inUserData, AudioSessionPropertyID inPropertyID, UInt32 inPropertyValueSize, const void *inPropertyValue) {
+    UInt32 propertySize = sizeof(CFStringRef);
+    OSStatus status = AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareOutputVolume, &propertySize, &__audioVolume);
+	if (status)
+	{
+		// failed
+	}
 
+    LOGDEBUG("Noting volume: %f", __audioVolume);
+}
 @end
