@@ -61,36 +61,6 @@ extern int __cheatmenu_run;
 			controllerRect.size.height = 240;
 		}
 	    [ controllerImage draw1PartImageInRect: controllerRect ];
-#if 0
-    if (IS_DEBUG) {
-        CGContextRef ctx = UICurrentContext();
-        float red[4]   = {1, 0, 0, 1};
-        float green[4] = {0, 1, 0, 1};
-        float blue[4]  = {0, 0, 1, 1};
-
-        CGContextSetFillColor(ctx, red);
-        CGContextFillRect(ctx, LPad);
-        CGContextFillRect(ctx, RPad);
-        CGContextFillRect(ctx, Menu);
-        CGContextFillRect(ctx, AB);
-
-        CGContextSetFillColor(ctx, blue);
-        CGContextFillRect(ctx, Up);
-        CGContextFillRect(ctx, Down);
-        CGContextFillRect(ctx, Left);
-        CGContextFillRect(ctx, Right);
-        CGContextFillRect(ctx, UpLeft);
-        CGContextFillRect(ctx, DownLeft);
-        CGContextFillRect(ctx, UpRight);
-        CGContextFillRect(ctx, DownRight);
-
-        CGContextSetFillColor(ctx, green);
-        CGContextFillRect(ctx, Select);
-        CGContextFillRect(ctx, Start);
-        CGContextFillRect(ctx, A);
-        CGContextFillRect(ctx, B);
-    }
-#endif
 	if(preferences.landscape)
 	{
 		[ self fixRects ];
