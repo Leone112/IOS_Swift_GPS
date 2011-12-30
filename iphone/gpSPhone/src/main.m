@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     getcwd(main_path, 512);
 	Init_joypad();
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    int ret = UIApplicationMain(argc, argv, [gpSPhoneApp class]);
+    int ret = UIApplicationMain(argc, argv, NSStringFromClass([gpSPhoneApp class]), NSStringFromClass([gpSPhoneApp class]));
     End_joypad();
     [pool release];
     return ret;
