@@ -22,7 +22,7 @@
 @synthesize path = _path;
 @synthesize delegate = _delegate;
 
-- (id) initWithFrame:(struct CGRect)frame
+- (id) init
 {
 	if ((self == [super initWithStyle:UITableViewStylePlain]) != nil)
 	{
