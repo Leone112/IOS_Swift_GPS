@@ -198,8 +198,6 @@ void sound_read_savestate(file_tag_type savestate_file);
   address16(io_registers, 0x70) = value;                                      \
 }                                                                             \
 
-static u32 gbc_sound_wave_volume[4] = { 0, 16384, 8192, 4096 };
-
 #define gbc_sound_tone_control_low_wave()                                     \
 {                                                                             \
   gbc_sound_channel[2].length_ticks = 256 - (value & 0xFF);                   \
