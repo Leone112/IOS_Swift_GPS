@@ -304,6 +304,7 @@ void LOGDEBUG(const char * text, ...)
 void * gpSPhone_Thread_Start(void * args)
 {
 	iphone_main(__fileName);
+	return NULL;
 }
 
 void gpSPhone_Halt(void)
