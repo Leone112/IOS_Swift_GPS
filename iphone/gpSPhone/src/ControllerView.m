@@ -77,7 +77,7 @@ extern int __cheatmenu_run;
 
 - (BOOL) userInteractionEnabled
 {
-	return YES
+	return YES;
 }
 
 - (BOOL) canHandleGestures
