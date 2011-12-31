@@ -27,6 +27,13 @@
 #import <dirent.h>
 #import <unistd.h>
 
+enum {
+	badROMSheetTag,
+	saveStateSheetTag,
+	selectROMSheetTag,
+	supportSheetTag
+};
+
 char __savefileName[512];
 char __lastfileName[512];
 char * __fileName;
@@ -41,10 +48,14 @@ void gotoMenu()
 	[ sharedInstance gotoMenu ];
 }
 
+@interface MainView (Private)
+- (NSArray *) tabBarItems;
+@end
+
 @implementation MainView
 - (id) initWithFrame:(struct CGRect)rect
 {
-	if ((self == [ super initWithFrame:rect ]) != nil)
+	if ((self = [ super initWithFrame:rect ]) != nil)
 	{
 
 		sharedInstance = self;
@@ -52,7 +63,7 @@ void gotoMenu()
 		LOGDEBUG("MainView.initWithFrame()");
 
 		mainRect = rect;
-		mainRect = [ UIHardware fullScreenApplicationContentRect ];
+		mainRect = [ [ UIScreen mainScreen ] applicationFrame ];
 		mainRect.origin.x = mainRect.origin.y = 0.0f;
 
 		currentView = CUR_BROWSER;
@@ -72,13 +83,13 @@ void gotoMenu()
 		allowDeleteROMs = preferences.canDeleteROMs;
 
 		[ savedBrowser setSaved:YES ];
-		[ savedBrowser reloadData ];
+		[ savedBrowser.tableView reloadData ];
 
 		[ recentBrowser setRecent:YES ];
-		[ recentBrowser reloadData ];
+		[ recentBrowser.tableView reloadData ];
 
 		[ bookmarkBrowser setBookmarks:YES ];
-		[ bookmarkBrowser reloadData ];
+		[ bookmarkBrowser.tableView reloadData ];
 
 		[ self addSubview:navBar ];
 
@@ -104,26 +115,24 @@ void gotoMenu()
 
 #pragma mark -
 
-- (void) alertSheet:(UIAlertSheet *)sheet buttonClicked:(int)button
-{
-	LOGDEBUG("alertSheet:buttonClicked: %d", button);
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+	[self actionSheet:(UIActionSheet *)alertView clickedButtonAtIndex:buttonIndex]; // ugh, ew
+}
 
-	if (sheet == badROMSheet)
-	{
-		LOGDEBUG("alertSheet:buttonClicked(): badROMSheet");
-	}
-	else if (sheet == supportSheet)
+- (void)actionSheet:(UIActionSheet *)sheet clickedButtonAtIndex:(NSInteger)button
+{
+	if (sheet.tag == supportSheetTag)
 	{
 		if ( button == 1 )
 		{
-			[UIApp openURL:[NSURL URLWithString:@"http://www.zodttd.com"]];
+			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.zodttd.com"]];
 		}
 		else if ( button == 2 )
 		{
-			[UIApp openURL:[NSURL URLWithString:@"http://www.modmyifone.com/forums/?styleid=3"]];
+			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.modmyifone.com/forums/?styleid=3"]];
 		}
 	}
-	else if (sheet == saveStateSheet)
+	else if (sheet.tag == saveStateSheetTag)
 	{
 		LOGDEBUG("alertSheet:buttonClicked(): saveStateSheet %d", button);
 		if (button == 1)
@@ -136,18 +145,18 @@ void gotoMenu()
 				}
 				rename(__fileNameTempSave, __lastfileName);
 			}
-			[ savedBrowser reloadData ];
+			[ savedBrowser.tableView reloadData ];
 		}
 		else if (button == 2)
 		{
-			[ savedBrowser reloadData ];
+			[ savedBrowser.tableView reloadData ];
 		}
 		else
 		{
 			gpSPhone_DeleteTempState();
 		}
 	}
-	else if (sheet == selectROMSheet)
+	else if (sheet.tag == selectROMSheetTag)
 	{
 		switch (button)
 		{
@@ -159,7 +168,7 @@ void gotoMenu()
 				{
 					unlink([ m_currentFile cStringUsingEncoding:
 							 NSASCIIStringEncoding ]);
-					[ savedBrowser reloadData ];
+					[ savedBrowser.tableView reloadData ];
 				}
 				else
 				{
@@ -169,6 +178,7 @@ void gotoMenu()
 						[ self addBookmark:m_currentFile ];
 					}
 				}
+
 				break;
 			case (3):
 				if ([ [ m_currentFile pathExtension ] isEqualToString:@"svs" ])
@@ -181,11 +191,10 @@ void gotoMenu()
 						[ self addBookmark:m_currentFile ];
 					}
 				}
+
 				break;
 		}
 	}
-
-	[ sheet dismiss ];
 }
 
 #pragma mark -
@@ -210,12 +219,12 @@ void gotoMenu()
 							[ transitionView transition:2 toView:savedBrowser ];
 						else if (currentBrowserPage == CB_RECENT)
 						{
-							[ recentBrowser reloadData ];
+							[ recentBrowser.tableView reloadData ];
 							[ transitionView transition:2 toView:recentBrowser ];
 						}
 						else if (currentBrowserPage == CB_BOOKMARKS)
 						{
-							[ bookmarkBrowser reloadData ];
+							[ bookmarkBrowser.tableView reloadData ];
 							[ transitionView transition:2 toView:bookmarkBrowser ];
 						}
 					}
@@ -226,7 +235,7 @@ void gotoMenu()
 					{
 						unlink("/var/root/Library/Preferences/gpSPhone.history");
 						unlink("/var/mobile/Library/Preferences/gpSPhone.history");
-						[ recentBrowser reloadData ];
+						[ recentBrowser.tableView reloadData ];
 					}
 					break;
 
@@ -239,12 +248,12 @@ void gotoMenu()
 						[ transitionView transition:2 toView:savedBrowser ];
 					else if (currentBrowserPage == CB_RECENT)
 					{
-						[ recentBrowser reloadData ];
+						[ recentBrowser.tableView reloadData ];
 						[ transitionView transition:2 toView:recentBrowser ];
 					}
 					else if (currentBrowserPage == CB_BOOKMARKS)
 					{
-						[ bookmarkBrowser reloadData ];
+						[ bookmarkBrowser.tableView reloadData ];
 						[ transitionView transition:2 toView:bookmarkBrowser ];
 					}
 					break;
@@ -256,15 +265,6 @@ void gotoMenu()
 			switch (currentView)
 			{
 				case CUR_PREFERENCES:
-					supportSheet = [ [ UIAlertSheet alloc ] initWithFrame:
-									 CGRectMake(0, 240, 320, 240) ];
-					[ supportSheet setTitle:@"Support ZodTTD" ];
-					[ supportSheet setBodyText:[NSString stringWithFormat:@"Thank you for using my programs for the iPhone and iPod Touch. For more information on my projects head to zodttd.com. Also be sure to visit modmyifone.com for up to date news and a large community of iPhone and iPod Touch users!"] ];
-					[ supportSheet addButtonWithTitle:@"www.zodttd.com" ];
-					[ supportSheet addButtonWithTitle:@"www.modmyifone.com" ];
-					[ supportSheet addButtonWithTitle:@"Cancel" ];
-					[ supportSheet setDelegate:self ];
-					[ supportSheet presentSheetInView:self ];
 					break;
 				case CUR_BROWSER:
 					currentView = CUR_PREFERENCES;
@@ -297,10 +297,8 @@ void gotoMenu()
 	m_currentFile = [ file copy ];
 	BOOL bookmarked = [ self isBookmarked:file ];
 
-	selectROMSheet = [ [ UIAlertSheet alloc ] initWithFrame:
-					   CGRectMake(0, 240, 320, 240) ];
-	[ selectROMSheet setTitle:[ file lastPathComponent ] ];
-	[ selectROMSheet setBodyText:@"Please select an action:" ];
+	UIActionSheet *selectROMSheet = [ [ UIActionSheet alloc ] init ];
+	[ selectROMSheet setTitle:[NSString stringWithFormat:@"%@\n%@", [ file lastPathComponent ], @"Please select an action:" ] ];
 	if ([ [ file pathExtension ] isEqualToString:@"svs" ])
 	{
 		[ selectROMSheet addButtonWithTitle:@"Restore Saved Game" ];
@@ -316,7 +314,9 @@ void gotoMenu()
 
 	[ selectROMSheet addButtonWithTitle:@"Cancel" ];
 	[ selectROMSheet setDelegate:self ];
-	[ selectROMSheet presentSheetInView:self ];
+	[ selectROMSheet showInView:self ];
+
+	[ selectROMSheet release ];
 }
 
 #pragma mark -
@@ -380,7 +380,7 @@ void gotoMenu()
 		fclose(out);
 		free(t);
 	}
-	[ bookmarkBrowser reloadData ];
+	[ bookmarkBrowser.tableView reloadData ];
 }
 
 #pragma mark -
@@ -397,12 +397,11 @@ void gotoMenu()
 
 	LOGDEBUG("MainView.fileBrowser.fileSelected('%s')", cFileName);
 
-	[ UIHardware _setStatusBarHeight:0.0f ];
-	[ UIApp setStatusBarMode:2 duration:0 ];
+	[[UIApplication sharedApplication] setStatusBarHidden:YES];
 
-	mainRect = [ UIHardware fullScreenApplicationContentRect ];
+	mainRect = [ [ UIScreen mainScreen ] applicationFrame ];
 	mainRect.origin.x = mainRect.origin.y = 0.0f;
-	[ parentWindow setFrame:[ UIHardware fullScreenApplicationContentRect ] ];
+	[ parentWindow setFrame:[ [ UIScreen mainScreen ] applicationFrame ] ];
 	[ self setFrame:mainRect ];
 	[ emuView removeFromSuperview ];
 	[ emuView release ];
@@ -462,13 +461,12 @@ void gotoMenu()
 	}
 	else
 	{
-		badROMSheet = [ [ UIAlertSheet alloc ] initWithFrame:
-						CGRectMake(0, 240, 320, 240) ];
-		[ badROMSheet setTitle:@"Unable to load ROM Image" ];
-		[ badROMSheet setBodyText:[NSString stringWithFormat:@"Unable to load ROM image %@. It may not be a valid ROM image, or the resources may not be available to load it.", file] ];
+		UIActionSheet *badROMSheet = [ [ UIActionSheet alloc ] init];
+		[ badROMSheet setTitle:[NSString stringWithFormat:@"Unable to load ROM image %@. It may not be a valid ROM image, or the resources may not be available to load it.", file] ];
 		[ badROMSheet addButtonWithTitle:@"OK" ];
 		[ badROMSheet setDelegate:self ];
-		[ badROMSheet presentSheetInView:self ];
+		[ badROMSheet showInView:self ];
+		[ badROMSheet release ];
 	}
 }
 
@@ -480,7 +478,6 @@ void gotoMenu()
 
 	__emulation_run = 1;
 
-	[ UIApp addStatusBarImageNamed:@"NES" removeOnAbnormalExit:YES ];
 	pthread_create(&emulation_tid, NULL, gpSPhone_Thread_Start, NULL);
 	LOGDEBUG("MainView.startEmulator(): Done");
 
@@ -504,27 +501,24 @@ void gotoMenu()
 		LOGDEBUG("MainView.stopEmulator(): pthread_join() returned");
 	}
 
-	[ UIApp removeStatusBarImageNamed:@"NES" ];
-
 	LOGDEBUG("MainView.stopEmulator(): saving SRAM");
 
 	if (promptForSave == YES)
 	{
 		if (preferences.autoSave)
 		{
-			[ savedBrowser reloadData ];
+			[ savedBrowser.tableView reloadData ];
 		}
 		else
 		{
-			saveStateSheet = [ [ UIAlertSheet alloc ] initWithFrame:
-							   CGRectMake(0, 240, 320, 240) ];
-			[ saveStateSheet setTitle:@"Do you want to save this game?" ];
-			[ saveStateSheet setBodyText:@"Do you want to create a new save state or overwrite the currently loaded save?" ];
+			UIActionSheet *saveStateSheet = [ [ UIActionSheet alloc ] init ];
+			[ saveStateSheet setTitle:@"Do you want to create a new save state or overwrite the currently loaded save?" ];
 			[ saveStateSheet addButtonWithTitle:@"Yes Overwrite Current" ];
 			[ saveStateSheet addButtonWithTitle:@"Yes" ];
 			[ saveStateSheet addButtonWithTitle:@"No" ];
 			[ saveStateSheet setDelegate:self ];
-			[ saveStateSheet presentSheetInView:self ];
+			[ saveStateSheet showInView:self ];
+			[ saveStateSheet release ];
 		}
 	}
 	else
@@ -624,8 +618,6 @@ void gotoMenu()
 
 - (FileBrowser *) createBrowser
 {
-	float offset = 48.0 * 2; /* nav bar + button bar */
-
 	LOGDEBUG("MainView.createBrowser(): Initializing");
 	FileBrowser * browser = [ [ FileBrowser alloc ] init];
 
@@ -688,7 +680,7 @@ void gotoMenu()
 
 - (BOOL) isBrowsing
 {
-	return (currentView != CUR_EMULATOR)
+	return (currentView != CUR_EMULATOR);
 }
 
 - (void) reloadBrowser
@@ -699,8 +691,8 @@ void gotoMenu()
 	else
 		[ savedBrowser scrollToTop ];
 
-	[ fileBrowser reloadData ];
-	[ savedBrowser reloadData ];
+	[ fileBrowser.tableView reloadData ];
+	[ savedBrowser.tableView reloadData ];
 }
 
 #pragma mark -
@@ -769,8 +761,6 @@ void gotoMenu()
 	bar.frame = CGRectMake(0.0f, 431.0f, 320.0f, 49.0f);
 	bar.items = [ self tabBarItems ];
 	[bar setDelegate:self];
-	[bar setBarStyle:1];
-	[bar setButtonBarTrackingMode:2];
 
 	int buttons[5] = { 1, 2, 3, 4, 5 };
 	[bar registerButtonGroup:0 withButtons:buttons withCount:5];
@@ -811,12 +801,12 @@ void gotoMenu()
 			currentBrowserPage = CB_SAVED;
 			break;
 		case 3:
-			[ bookmarkBrowser reloadData ];
+			[ bookmarkBrowser.tableView reloadData ];
 			[ transitionView transition:0 toView:bookmarkBrowser ];
 			currentBrowserPage = CB_BOOKMARKS;
 			break;
 		case 4:
-			[ recentBrowser reloadData ];
+			[ recentBrowser.tableView reloadData ];
 			[ transitionView transition:0 toView:recentBrowser ];
 			currentBrowserPage = CB_RECENT;
 			break;
@@ -826,20 +816,12 @@ void gotoMenu()
 
 - (UITableView *) createPrefPane
 {
-	float offset = 0.0;
-
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	float transparentComponents[4] = { 0, 0, 0, 0 };
-	float grayComponents[4] = { 0.85, 0.85, 0.85, 1 };
-
-	CGColorSpaceRef colorShadow = CGColorSpaceCreateDeviceRGB();
-
-	UITableView * pref = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, mainRect.size.width, mainRect.size.height - offset) style:UITableViewStyleGrouped];
+	UITableView * pref = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, mainRect.size.width, mainRect.size.height) style:UITableViewStyleGrouped];
 
 	[ pref setDataSource:self ];
 	[ pref setDelegate:self ];
 
-	NSString * verString = [ [NSString alloc] initWithCString:VERSION ];
+	NSString * verString = [ [NSString alloc] initWithCString:VERSION encoding:NSUTF8StringEncoding ];
 	id old = versionString;
 	versionString = [ [ NSString alloc ] initWithFormat:@"Version %@", verString ];
 	[ old release ];
@@ -864,7 +846,7 @@ void gotoMenu()
 			x = y;
 			x[strlen(x) - 4] = 0;
 		}
-		currentGameTitle = [[NSString alloc] initWithCString:x];
+		currentGameTitle = [[NSString alloc] initWithCString:x encoding:NSUTF8StringEncoding ];
 		if (__fileName)
 			free(o);
 	}
@@ -938,18 +920,18 @@ void gotoMenu()
 	}
 
 #ifdef DEBUG
-	if (group == 1 && row == 14)
+	if (indexPath.section == 1 && indexPath.row == 14)
 #else
-	if (group == 1 && row == 13)
+	if (indexPath.section == 1 && indexPath.row == 13)
 #endif
 		[ cell setEnabled:NO ];
 	else
 		[ cell setEnabled:YES ];
 
-	switch (group)
+	switch (indexPath.section)
 	{
 		case (0):
-			switch (row)
+			switch (indexPath.row)
 			{
 				case (0):
 					cell.textLabel.text = @"Auto-Save Game";
@@ -986,7 +968,7 @@ void gotoMenu()
 			break;
 
 		case (1):
-			switch (row)
+			switch (indexPath.row)
 			{
 				case (0):
 					cell.textLabel.text = @"Frame Skip";
@@ -1087,11 +1069,11 @@ void gotoMenu()
 
 					[cell.control setOn:preferences.debug];
 #else
-					cell.textLabel.text = versionString
+					cell.textLabel.text = versionString;
 #endif
 					break;
 				case (14):
-					cell.textLabel.text = versionString
+					cell.textLabel.text = versionString;
 					break;
 			}
 			break;
@@ -1141,12 +1123,12 @@ void gotoMenu()
 		[ transitionView transition:1 toView:savedBrowser ];
 	else if (currentBrowserPage == CB_RECENT)
 	{
-		[ recentBrowser reloadData ];
+		[ recentBrowser.tableView reloadData ];
 		[ transitionView transition:1 toView:recentBrowser ];
 	}
 	else if (currentBrowserPage == CB_BOOKMARKS)
 	{
-		[ bookmarkBrowser reloadData ];
+		[ bookmarkBrowser.tableView reloadData ];
 		[ transitionView transition:1 toView:bookmarkBrowser ];
 	}
 

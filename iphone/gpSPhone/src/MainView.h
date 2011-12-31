@@ -31,7 +31,7 @@ extern void gotoMenu();
 #define ROM_PATH1 "/var/root/Media/ROMs/GBA"
 #define ROM_PATH2 "/var/mobile/Media/ROMs/GBA"
 
-@interface MainView : UIView <FileBrowserDelegate>
+@interface MainView : UIView <UIActionSheetDelegate, UIAlertViewDelegate, UITabBarDelegate, UITableViewDelegate, UITableViewDataSource, FileBrowserDelegate>
 {
 	NSString * m_currentFile;
 
@@ -57,11 +57,6 @@ extern void gotoMenu();
 	BOOL allowDeleteROMs;
 	NSString * versionString;
 	UIWindow * parentWindow;
-
-	UIActionSheet * badROMSheet;
-	UIActionSheet * saveStateSheet;
-	UIActionSheet * selectROMSheet;
-	UIActionSheet * supportSheet;
 }
 
 - (id)initWithFrame:(CGRect)frame;
@@ -81,8 +76,7 @@ extern void gotoMenu();
 - (int)getCurrentView;
 - (void)reloadBrowser;
 - (UITabBar *)createTabBar;
-- (void)buttonBarItemTapped:(id)sender;
-- (NSArray *)buttonBarItems;
+- (NSArray *)tabBarItems;
 - (void)reloadButtonBar;
 - (void)load;
 - (BOOL)isBookmarked:(NSString *)file;

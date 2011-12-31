@@ -49,5 +49,6 @@
 - (void)setAllowDeleteROMs:(BOOL)allow;
 - (void)setRecent:(BOOL)recent;
 - (void)setBookmarks:(BOOL)bookmarks;
+- (void) scrollToTop;
 
 @end

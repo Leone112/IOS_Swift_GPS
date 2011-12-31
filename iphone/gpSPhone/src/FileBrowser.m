@@ -59,7 +59,7 @@
 	_path = [path copy];
 	[old release];
 
-	[self reloadData];
+	[self.tableView reloadData];
 }
 
 - (void) addExtension:(NSString *)extension

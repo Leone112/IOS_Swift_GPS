@@ -1,7 +1,7 @@
 @interface ControlCell : UITableViewCell
-@property (nonatomic) Class controlClass;
+@property (nonatomic, assign) Class controlClass;
 
-@property (nonatomic, readonly) UIControl *control;
+@property (nonatomic, readonly) id control;
 
-@property (nonatomic) SEL controlAction;
+@property (nonatomic, assign) SEL controlAction;
 @end

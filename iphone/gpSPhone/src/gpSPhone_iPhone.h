@@ -85,6 +85,8 @@ void gpSPhone_DeleteTempState(void);
 
 int gpSPhone_OpenSound(int samples_per_sync, int sample_rate);
 void gpSPhone_CloseSound(void);
+void gpSPhone_MuteSound(void);
+void gpSPhone_DemuteSound(void);
 void gpSPhone_StopSound();
 void gpSPhone_StartSound();
 FILE * fopen_home(char * filename, char * fileop);

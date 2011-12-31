@@ -236,7 +236,7 @@ extern int __cheatmenu_run;
 }
 
 #pragma mark -
-
+/*
 - (void) gestureStarted:(UIEvent *)event
 {
 	[ self gestureChanged:event ];
@@ -310,7 +310,7 @@ extern int __cheatmenu_run;
 			changed = 1;
 		}
 	}
-#endif /* if 0 */
+#endif*/ /* if 0 */
 #if 0
 	if (!button1 || (!(cPad1 & button1)))
 	{
@@ -371,13 +371,13 @@ extern int __cheatmenu_run;
 		}
 	}
 #endif /* if 0 */
-	if (changed)
+/*	if (changed)
 	{
 		LOGDEBUG("ControllerView.gestureChanged() b1: %d b2: %d "
 				 "cPad1: %d", button1, button2, cPad1);
 	}
 
-}
+}*/
 
 #pragma mark -
 
