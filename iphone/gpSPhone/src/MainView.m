@@ -113,6 +113,8 @@ void gotoMenu()
 	[ super dealloc ];
 }
 
+#pragma mark -
+
 - (void) alertSheet:(UIAlertSheet *)sheet buttonClicked:(int)button
 {
 	LOGDEBUG("alertSheet:buttonClicked: %d", button);
@@ -196,6 +198,8 @@ void gotoMenu()
 
 	[ sheet dismiss ];
 }
+
+#pragma mark -
 
 - (void) navigationBar:(UINavigationBar *)navbar buttonClicked:(int)button
 {
@@ -297,6 +301,8 @@ void gotoMenu()
 	[ self setNavBar ];
 }
 
+#pragma mark -
+
 - (void) fileBrowser:(FileBrowser *)browser fileSelected:(NSString *)file
 {
 	m_currentFile = [ file copy ];
@@ -323,6 +329,8 @@ void gotoMenu()
 	[ selectROMSheet setDelegate:self ];
 	[ selectROMSheet presentSheetInView:self ];
 }
+
+#pragma mark -
 
 - (BOOL) isBookmarked:(NSString *)file
 {
@@ -385,6 +393,8 @@ void gotoMenu()
 	}
 	[ bookmarkBrowser reloadData ];
 }
+
+#pragma mark -
 
 - (void) load
 {
@@ -473,6 +483,8 @@ void gotoMenu()
 	}
 }
 
+#pragma mark -
+
 - (void) startEmulator
 {
 	LOGDEBUG("MainView.startEmulator()");
@@ -557,6 +569,8 @@ void gotoMenu()
 	// pthread_create(&emulation_tid, NULL, Main_Thread_Start, NULL);
 }
 
+#pragma mark -
+
 - (void) setNavBar
 {
 	switch (currentView)
@@ -616,6 +630,8 @@ void gotoMenu()
 			break;
 	}
 }
+
+#pragma mark -
 
 - (FileBrowser *) createBrowser
 {
@@ -682,13 +698,26 @@ void gotoMenu()
 	return transition;
 }
 
+#pragma mark -
+
 - (BOOL) isBrowsing
 {
-
-	if (currentView == CUR_EMULATOR)
-		return NO;
-	return YES;
+	return (currentView != CUR_EMULATOR)
 }
+
+- (void) reloadBrowser
+{
+	LOGDEBUG("MainView.reloadBrowser()");
+	if (currentBrowserPage == CB_NORMAL)
+		[ fileBrowser scrollToTop ];
+	else
+		[ savedBrowser scrollToTop ];
+
+	[ fileBrowser reloadData ];
+	[ savedBrowser reloadData ];
+}
+
+#pragma mark -
 
 - (BOOL) savePreferences
 {
@@ -943,13 +972,14 @@ void gotoMenu()
 	return pref;
 }
 
+#pragma mark -
+
 - (int) numberOfGroupsInPreferencesTable:(UIPreferencesTable *)aTable
 {
 	return 2;
 }
 
-- (int) preferencesTable:(UIPreferencesTable *)aTable
-	numberOfRowsInGroup:(int)group
+- (int) preferencesTable:(UIPreferencesTable *)aTable numberOfRowsInGroup:(int)group
 {
 	switch (group)
 	{
@@ -966,8 +996,7 @@ void gotoMenu()
 	}
 }
 
-- (UIPreferencesTableCell *) preferencesTable:(UIPreferencesTable *)aTable
-	cellForGroup:(int)group
+- (UIPreferencesTableCell *) preferencesTable:(UIPreferencesTable *)aTable cellForGroup:(int)group
 {
 	if (groupcell[group] != NULL)
 		return groupcell[group];
@@ -985,10 +1014,7 @@ void gotoMenu()
 	return groupcell[group];
 }
 
-- (float) preferencesTable:(UIPreferencesTable *)aTable
-	heightForRow:(int)row
-	inGroup:(int)group
-	withProposedHeight:(float)proposed
+- (float) preferencesTable:(UIPreferencesTable *)aTable heightForRow:(int)row inGroup:(int)group withProposedHeight:(float)proposed
 {
 
 	if (row == -1)
@@ -1010,15 +1036,12 @@ void gotoMenu()
 	return proposed;
 }
 
-- (BOOL) preferencesTable:(UIPreferencesTable *)aTable
-	isLabelGroup:(int)group
+- (BOOL) preferencesTable:(UIPreferencesTable *)aTable isLabelGroup:(int)group
 {
 	return NO;
 }
 
-- (UIPreferencesTableCell *) preferencesTable:(UIPreferencesTable *)aTable
-	cellForRow:(int)row
-	inGroup:(int)group
+- (UIPreferencesTableCell *) preferencesTable:(UIPreferencesTable *)aTable cellForRow:(int)row inGroup:(int)group
 {
 	if (cells[row][group] != NULL)
 		return cells[row][group];
@@ -1186,23 +1209,11 @@ void gotoMenu()
 	return cells[row][group];
 }
 
+#pragma mark -
+
 - (int) getCurrentView
 {
-
 	return currentView;
-}
-
-- (void) reloadBrowser
-{
-
-	LOGDEBUG("MainView.reloadBrowser()");
-	if (currentBrowserPage == CB_NORMAL)
-		[ fileBrowser scrollToTop ];
-	else
-		[ savedBrowser scrollToTop ];
-
-	[ fileBrowser reloadData ];
-	[ savedBrowser reloadData ];
 }
 
 - (void) reloadButtonBar
