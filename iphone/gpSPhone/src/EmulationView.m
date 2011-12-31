@@ -27,7 +27,7 @@ static EmulationView * sharedInstance = nil;
 @implementation EmulationView
 - (id) initWithFrame:(CGRect)frame
 {
-	if ((self == [super initWithFrame:frame]) != nil)
+	if ((self = [super initWithFrame:frame]) != nil)
 	{
 
 		sharedInstance = self;
