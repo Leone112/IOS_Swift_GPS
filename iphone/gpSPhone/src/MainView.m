@@ -697,7 +697,7 @@ void gotoMenu()
 
 #pragma mark -
 
-- (UIButtonBar *) createTabBar
+- (UITabBar *) createTabBar
 {
 	UITabBar * bar = [ [ UITabBar alloc ] init ];
 	bar.frame = CGRectMake(0.0f, 431.0f, 320.0f, 49.0f);
