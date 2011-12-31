@@ -22,6 +22,8 @@
 
 #import "FileTable.h"
 
+@class FileBrowser;
+
 @protocol FileBrowserDelegate <NSObject>
 @optional
 - (void)fileBrowser: (FileBrowser *)browser fileSelected:(NSString *)file;
@@ -36,16 +38,15 @@
 	int _rowCount;
 	id <FileBrowserDelegate> _delegate;
 	BOOL _saved;
-        BOOL _recent;
-        BOOL _bookmarks;
-        BOOL _allowDeleteROMs;
+	BOOL _recent;
+	BOOL _bookmarks;
+	BOOL _allowDeleteROMs;
 }
+@property (nonatomic, copy) NSString *path;
+@property (nonatomic, assign) id <FileBrowserDelegate> delegate;
 
 - (id)initWithFrame:(CGRect)rect;
-- (NSString *)path;
-- (void)setPath: (NSString *)path;
 - (void)reloadData;
-- (void)setDelegate:(id)delegate;
 - (int)numberOfRowsInTable:(UITable *)table;
 - (UIDeletableCell *)table:(UITable *)table cellForRow:(int)row column:(UITableColumn *)col;
 - (void)tableRowSelected:(NSNotification *)notification;

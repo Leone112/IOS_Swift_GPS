@@ -18,7 +18,10 @@
 
 #import "FileBrowser.h"
 
-@implementation FileBrowser 
+@implementation FileBrowser
+@synthesize path = _path;
+@synthesize delegate = _delegate;
+
 - (id)initWithFrame:(struct CGRect)frame{
 	if ((self == [super initWithFrame: frame]) != nil) {
 		UITableColumn *col = [[UITableColumn alloc]
@@ -52,26 +55,24 @@
 }
 
 - (void)dealloc {
-    LOGDEBUG("FileBrowser.dealloc()");
-	[_path release];
-LOGDEBUG("FileBrowser.dealloc1()");
-	[_files release];
-LOGDEBUG("FileBrowser.dealloc2()");
-	[_extensions release];
-LOGDEBUG("FileBrowser.dealloc3()");
-	[_table release];
-LOGDEBUG("FileBrowser.dealloc4()");
 	_delegate = nil;
+
+	[_path release];
+	[_files release];
+	[_extensions release];
+	[_table release];
+
 	[super dealloc];
 }
 
 - (NSString *)path {
-	return [[_path retain] autorelease];
+	return [[_path copy] autorelease];
 }
 
 - (void)setPath: (NSString *)path {
-	[_path release];
+	id old = _path;
 	_path = [path copy];
+	[old release];
 
 	[self reloadData];
 }
