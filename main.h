@@ -72,7 +72,6 @@ extern u32 synchronize_flag;
 extern u32 skip_next_frame;
 
 extern timer_type timer[4];
-static u32 prescale_table[] = { 0, 6, 8, 10 };
 
 extern u32 cycle_memory_access;
 extern u32 cycle_pc_relative_access;
