@@ -24,26 +24,14 @@
 
 - (id) initWithFrame:(struct CGRect)frame
 {
-	if ((self == [super initWithFrame:frame]) != nil)
+	if ((self == [super initWithStyle:UITableViewStylePlain]) != nil)
 	{
-		UITableColumn * col = [[UITableColumn alloc]
-							   initWithTitle:@"FileName"
-								  identifier:@"filename"
-									   width:frame.size.width
-			];
-
-		_table = [[FileTable alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-		[ _table addTableColumn:col ];
-		[ _table setSeparatorStyle:1 ];
-		[ _table setDelegate:self ];
-		[ _table setDataSource:self ];
-
-		[ _table allowDelete:_allowDeleteROMs ];
+		self.tableView.dataSource = self;
+		self.tableView.delegate = self;
+		self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
 
 		_extensions = [[NSMutableArray alloc] init];
 		_files = [[NSMutableArray alloc] init];
-
-		[self addSubview:_table];
 	}
 
 	return self;
@@ -56,7 +44,6 @@
 	[_path release];
 	[_files release];
 	[_extensions release];
-	[_table release];
 
 	[super dealloc];
 }
@@ -69,7 +56,6 @@
 - (void) setPath:(NSString *)path
 {
 	id old = _path;
-
 	_path = [path copy];
 	[old release];
 
@@ -162,24 +148,82 @@
 	_delegate = delegate;
 }
 
-- (int) numberOfRowsInTable:(UITable *)table
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 	return [_files count];
 }
 
-- (UIDeletableCell *) table:(UITable *)table cellForRow:(int)row column:(UITableColumn *)col
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	UIDeletableCell * cell = [[UIDeletableCell alloc] init];
-
-	[ cell setTable:_table ];
-	[ cell setFiles:_files ];
-	[ cell setPath:_path ];
-	[ cell setTitle:[[_files objectAtIndex:row] stringByDeletingPathExtension ]];
-
-	return [ cell autorelease ];
+	return _allowDeleteROMs;
 }
 
-- (void) tableRowSelected:(NSNotification *)notification
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	NSString * file = [_path stringByAppendingPathComponent:[_files objectAtIndex:[ _table _rowForTableCell:self]]];
+	char * fn = (char *)[file cStringUsingEncoding:NSASCIIStringEncoding];
+
+	LOGDEBUG("UIDeletableCell._willBeDeleted: %s", fn);
+
+	if ((!strcmp(fn + (strlen(fn) - 4), ".svs"))
+		|| (!strcasecmp(fn + (strlen(fn) - 4), ".zip"))
+		|| (!strcasecmp(fn + (strlen(fn) - 4), ".gba")))
+	{
+		if ([ _table getBookmarks ] == YES)
+			FILE * in, * out;
+
+			in = fopen_home("Library/Preferences/gpSPhone.bookmarks", "r");
+			out = fopen("/tmp/gpSPhone.bookmarks", "w");
+			if (out)
+			{
+				char * s, * t, * u;
+				t = strdup(file);
+				s = strtok(t, "/");
+				while (s)
+				{
+					u = s;
+					s = strtok(NULL, "/");
+				}
+				LOGDEBUG("deleteBookmark: deleting '%s'", u);
+
+				if (in)
+				{
+					char buff[1024];
+					while ((fgets(buff, sizeof(buff), in)) != NULL)
+					{
+						if (strncmp(buff, u, strlen(u)))
+						{
+							fprintf(out, "%s", buff);
+						}
+					}
+					fclose(in);
+				}
+				fclose(out);
+				free(t);
+				rename("/tmp/gpSPhone.bookmarks", "/var/mobile/Library/Preferences/gpSPhone.bookmarks");
+				rename("/tmp/gpSPhone.bookmarks", "/var/root/Library/Preferences/gpSPhone.bookmarks");
+			}
+		else
+			unlink(fn);
+	}
+
+	[ _files removeObjectAtIndex:[ _table _rowForTableCell:self ] ];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+	if (!cell)
+	{
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"] autorelease];
+	}
+
+	cell.textLabel.text = [[_files objectAtIndex:row] stringByDeletingPathExtension ];
+
+	return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	if ( [ _delegate respondsToSelector:@selector( fileBrowser:fileSelected: ) ] )
 		[ _delegate fileBrowser:self fileSelected:[ self selectedFile ] ];

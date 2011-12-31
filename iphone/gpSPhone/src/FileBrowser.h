@@ -20,8 +20,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#import "FileTable.h"
-
 @class FileBrowser;
 
 @protocol FileBrowserDelegate <NSObject>
@@ -29,11 +27,10 @@
 - (void)fileBrowser:(FileBrowser *)browser fileSelected:(NSString *)file;
 @end
 
-@interface FileBrowser : UIView
+@interface FileBrowser : UITableViewController
 {
 	NSMutableArray * _extensions;
 	NSMutableArray * _files;
-	FileTable * _table;
 	NSString * _path;
 	int _rowCount;
 	id <FileBrowserDelegate> _delegate;
@@ -45,17 +42,11 @@
 @property (nonatomic, copy) NSString * path;
 @property (nonatomic, assign) id <FileBrowserDelegate> delegate;
 
-- (id)initWithFrame:(CGRect)rect;
-- (void)reloadData;
-- (int)numberOfRowsInTable:(UITable *)table;
-- (UIDeletableCell *)table:(UITable *)table cellForRow:(int)row column:(UITableColumn *)col;
-- (void)tableRowSelected:(NSNotification *)notification;
 - (NSString *)selectedFile;
 - (void)addExtension:(NSString *)extension;
 - (void)setSaved:(BOOL)saved;
 - (BOOL)getSaved;
 - (void)setAllowDeleteROMs:(BOOL)allow;
-- (void)scrollToTop;
 - (void)setRecent:(BOOL)recent;
 - (void)setBookmarks:(BOOL)bookmarks;
 
