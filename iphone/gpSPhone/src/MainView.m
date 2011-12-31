@@ -48,6 +48,15 @@ void gotoMenu()
 	[ sharedInstance gotoMenu ];
 }
 
+@interface UINavigationBar (SPI)
+- (void)showButtonsWithLeftTitle:(id)arg1 rightTitle:(id)arg2 leftBack:(BOOL)arg3;
+- (void)showLeftButton:(id)arg1 withStyle:(int)arg2 rightButton:(id)arg3 withStyle:(int)arg4;
+
+- (void)pushNavigationItem:(id)arg1;;
+
+- (void)enableAnimation;
+@end
+
 @interface MainView (Private)
 - (NSArray *) tabBarItems;
 @end
@@ -561,23 +570,17 @@ void gotoMenu()
 
 		case (CUR_PREFERENCES):
 			[ navItem setTitle:@"Settings" ];
-			[ navBar showButtonsWithLeftTitle:@"Back"
-								   rightTitle:@"Support" leftBack:YES
-			];
+			[ navBar showButtonsWithLeftTitle:@"Back" rightTitle:@"Support" leftBack:YES ];
 			break;
 
 		case (CUR_BROWSER):
 			if (currentBrowserPage != CB_RECENT)
 			{
-				[navBar showButtonsWithLeftTitle:nil
-									  rightTitle:@"Settings" leftBack:NO
-				];
+				[navBar showButtonsWithLeftTitle:nil rightTitle:@"Settings" leftBack:NO ];
 			}
 			else
 			{
-				[navBar showButtonsWithLeftTitle:@"Clear"
-									  rightTitle:@"Settings" leftBack:NO
-				];
+				[navBar showButtonsWithLeftTitle:@"Clear" rightTitle:@"Settings" leftBack:NO ];
 			}
 
 			switch (currentBrowserPage)
@@ -760,20 +763,10 @@ void gotoMenu()
 	UITabBar * bar = [ [ UITabBar alloc ] init ];
 	bar.frame = CGRectMake(0.0f, 431.0f, 320.0f, 49.0f);
 	bar.items = [ self tabBarItems ];
+
 	[bar setDelegate:self];
 
-	int buttons[5] = { 1, 2, 3, 4, 5 };
-	[bar registerButtonGroup:0 withButtons:buttons withCount:5];
-	[bar showButtonGroup:0 withDuration:0.0f];
-	int tag;
-
-	for (tag = 1; tag < 5; tag++)
-	{
-		[ [ bar viewWithTag:tag ]
-		  setFrame:CGRectMake(2.0f + ((tag - 1) * 80.0f), 1.0f, 80.0f, 48.0f)
-		];
-	}
-	[ bar showSelectionForButton:1];
+	bar.selectedItem = 0;
 
 	return bar;
 }

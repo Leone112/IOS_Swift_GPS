@@ -4,4 +4,6 @@
 @property (nonatomic, readonly) id control;
 
 @property (nonatomic, assign) SEL controlAction;
+
+- (void) setEnabled:(BOOL) enabled;
 @end

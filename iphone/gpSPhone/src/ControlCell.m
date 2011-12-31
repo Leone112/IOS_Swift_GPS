@@ -43,6 +43,11 @@
 	[control addTarget:nil action:action forControlEvents:UIControlEventValueChanged];
 }
 
+- (void) setEnabled:(BOOL) enabled
+{
+	[control setEnabled:enabled];
+}
+
 #pragma mark -
 
 - (void) prepareForReuse {
