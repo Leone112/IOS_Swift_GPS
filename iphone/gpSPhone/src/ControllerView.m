@@ -22,13 +22,16 @@
 extern unsigned long cPad1;
 extern int __cheatmenu_run;
 
+@interface ControllerView (Private)
+- (void) gestureChanged:(UIEvent *)event;
+@end
+
 @implementation ControllerView
 - (id) initWithFrame:(CGRect)frame
 {
-	if ((self == [super initWithFrame:frame]) != nil)
+	if ((self = [super initWithFrame:frame]) != nil)
 	{
 		LOGDEBUG("ControllerView.initWithFrame");
-		[ self setTapDelegate:self ];
 
 		[ self getControllerCoords ];
 		controllerImage = [ self getControllerImage ];
@@ -66,7 +69,7 @@ extern int __cheatmenu_run;
 		controllerRect.origin.y = 0;
 		controllerRect.size.height = 240;
 	}
-	[ controllerImage draw1PartImageInRect:controllerRect ];
+	[ controllerImage drawInRect:controllerRect ];
 	if (preferences.landscape)
 	{
 		[ self fixRects ];
@@ -118,7 +121,7 @@ extern int __cheatmenu_run;
 
 - (int) controllerButtonPressed:(UIEvent *)event
 {
-	CGPoint point = GSEventGetLocationInWindow(event);
+	CGPoint point = [[[event allTouches] anyObject] locationInView:nil];
 
 	return [ self controllerButtonPressedAtPoint:point ];
 }
@@ -199,7 +202,8 @@ extern int __cheatmenu_run;
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	CGPoint point = GSEventGetLocationInWindow(event);
+	CGPoint point = [[touches anyObject] locationInView:nil];
+
 	int button = [self controllerButtonPressedAtPoint:point];
 
 	if (button != cPad1)
@@ -210,10 +214,8 @@ extern int __cheatmenu_run;
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	CGPoint point = GSEventGetLocationInWindow(event);
-	int button;
-
-	button = [ self controllerButtonPressedAtPoint:point ];
+	CGPoint point = [[touches anyObject] locationInView:nil];
+	int button = [ self controllerButtonPressedAtPoint:point ];
 
 	if ( !button
 		 || cPad1 == button
@@ -235,12 +237,12 @@ extern int __cheatmenu_run;
 
 #pragma mark -
 
-- (void) gestureStarted:(struct __GSEvent *)event
+- (void) gestureStarted:(UIEvent *)event
 {
 	[ self gestureChanged:event ];
 }
 
-- (void) gestureEnded:(struct __GSEvent *)event
+- (void) gestureEnded:(UIEvent *)event
 {
 	int button = [self controllerButtonPressed:event];
 
@@ -249,7 +251,7 @@ extern int __cheatmenu_run;
 	LOGDEBUG("ControllerView.gestureEnded(%d) cPad1:%d", button, cPad1);
 }
 
-- (void) gestureChanged:(struct __GSEvent *)event
+- (void) gestureChanged:(UIEvent *)event
 {
 	int i, button, button1, button2, changed = 0;
 	CGPoint left  = GSEventGetInnerMostPathPosition(event);
