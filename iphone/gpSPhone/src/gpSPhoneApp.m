@@ -86,11 +86,9 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 		UIActionSheet * noROMSheet = [ [ UIActionSheet alloc ] initWithFrame:
 									   CGRectMake(0, 240, 320, 240) ];
 		[ noROMSheet setTitle:@"No ROMs Found" ];
-		[ noROMSheet setBodyText:[ NSString stringWithFormat:
-								   @"No GBA ROMs were found. \nPlease upload ROMs to %@ or if using FW 1.1.3, users should use %@", @ROM_PATH1, @ROM_PATH2 ] ];
 		[ noROMSheet addButtonWithTitle:@"OK" ];
 		[ noROMSheet setDelegate:self ];
-		[ noROMSheet presentSheetInView:mainView ];
+		[ noROMSheet showInView:mainView ];
 	}
 
 	/* Initialize stats bar icons and notification on first good run */
@@ -143,7 +141,6 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 	[ mainView savePreferences ];
 	if ([mainView getCurrentView] == CUR_EMULATOR)
 		[ mainView suspendEmulator ];
-	[ self suspendWithAnimation:NO ];
 }
 
 static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID inPropertyID, UInt32 inPropertyValueSize, const void * inPropertyValue)
