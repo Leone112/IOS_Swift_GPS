@@ -48,15 +48,11 @@
 	int orientation;
 }
 
-- (id)initWithFrame:(CGRect)frame;
-- (void)dealloc;
-- (void)drawRect:(CGRect)frame;
-- (BOOL)ignoresMouseEvents;
 - (void)fixRects;
-- (int)controllerButtonPressed:(struct __GSEvent *)event;
+- (int)controllerButtonPressed:(UIEvent *)event;
 - (int)controllerButtonPressedAtPoint:(CGPoint)point;
 - (UIImage *)getControllerImage;
-- (void)drawController;
+// - (void)drawController;
 - (void)getControllerCoords;
 
 @end
