@@ -879,7 +879,7 @@ void gotoMenu()
 	[ self setNavBar ];
 }
 
-- (UIPreferencesTable *) createPrefPane
+- (UITableView *) createPrefPane
 {
 	float offset = 0.0;
 
@@ -889,15 +889,15 @@ void gotoMenu()
 
 	CGColorSpaceRef colorShadow = CGColorSpaceCreateDeviceRGB();
 
-	UIPreferencesTable * pref = [[UIPreferencesTable alloc] initWithFrame:
-								 CGRectMake(0, 0, mainRect.size.width, mainRect.size.height - offset)];
+	UITableView * pref = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, mainRect.size.width, mainRect.size.height - offset) style:UITableViewStyleGrouped];
 
 	[ pref setDataSource:self ];
 	[ pref setDelegate:self ];
 
 	NSString * verString = [ [NSString alloc] initWithCString:VERSION ];
+	id old = versionString;
 	versionString = [ [ NSString alloc ] initWithFormat:@"Version %@", verString ];
-	[ verString release ];
+	[ old release ];
 
 	/* Current Game Title */
 	{

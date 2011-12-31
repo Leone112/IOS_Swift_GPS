@@ -71,7 +71,7 @@ extern void gotoMenu();
 - (void)suspendEmulator;
 - (void)setNavBar;
 - (BOOL)isBrowsing;
-- (UIPreferencesTable *)createPrefPane;
+- (UITableView *)createPrefPane;
 - (FileBrowser *)createBrowser;
 - (EmulationView *)createEmulationView;
 - (UINavigationBar *)createNavBar;
