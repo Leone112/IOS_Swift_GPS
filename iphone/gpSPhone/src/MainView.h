@@ -43,7 +43,7 @@ extern void gotoMenu();
 	FileBrowser * recentBrowser;
 	FileBrowser * bookmarkBrowser;
 	EmulationView * emuView;
-	UIPreferencesTable * prefTable;
+	UITableView * prefTable;
 	UIButtonBar * buttonBar;
 	UINavigationItem * navItem;
 
