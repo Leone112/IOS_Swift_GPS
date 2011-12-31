@@ -50,5 +50,5 @@
 - (void)setRecent:(BOOL)recent;
 - (void)setBookmarks:(BOOL)bookmarks;
 - (void) scrollToTop;
-
+- (void) reloadData;
 @end

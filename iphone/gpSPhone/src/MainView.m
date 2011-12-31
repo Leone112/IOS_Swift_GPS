@@ -92,13 +92,13 @@ void gotoMenu()
 		allowDeleteROMs = preferences.canDeleteROMs;
 
 		[ savedBrowser setSaved:YES ];
-		[ savedBrowser.tableView reloadData ];
+		[ savedBrowser reloadData ];
 
 		[ recentBrowser setRecent:YES ];
-		[ recentBrowser.tableView reloadData ];
+		[ recentBrowser reloadData ];
 
 		[ bookmarkBrowser setBookmarks:YES ];
-		[ bookmarkBrowser.tableView reloadData ];
+		[ bookmarkBrowser reloadData ];
 
 		[ self addSubview:navBar ];
 
@@ -154,11 +154,11 @@ void gotoMenu()
 				}
 				rename(__fileNameTempSave, __lastfileName);
 			}
-			[ savedBrowser.tableView reloadData ];
+			[ savedBrowser reloadData ];
 		}
 		else if (button == 2)
 		{
-			[ savedBrowser.tableView reloadData ];
+			[ savedBrowser reloadData ];
 		}
 		else
 		{
@@ -177,7 +177,7 @@ void gotoMenu()
 				{
 					unlink([ m_currentFile cStringUsingEncoding:
 							 NSASCIIStringEncoding ]);
-					[ savedBrowser.tableView reloadData ];
+					[ savedBrowser reloadData ];
 				}
 				else
 				{
@@ -226,12 +226,12 @@ void gotoMenu()
 						[ transitionView transition:2 toView:savedBrowser ];
 					else if (currentBrowserPage == CB_RECENT)
 					{
-						[ recentBrowser.tableView reloadData ];
+						[ recentBrowser reloadData ];
 						[ transitionView transition:2 toView:recentBrowser ];
 					}
 					else if (currentBrowserPage == CB_BOOKMARKS)
 					{
-						[ bookmarkBrowser.tableView reloadData ];
+						[ bookmarkBrowser reloadData ];
 						[ transitionView transition:2 toView:bookmarkBrowser ];
 					}
 					break;
@@ -241,7 +241,7 @@ void gotoMenu()
 					{
 						unlink("/var/root/Library/Preferences/gpSPhone.history");
 						unlink("/var/mobile/Library/Preferences/gpSPhone.history");
-						[ recentBrowser.tableView reloadData ];
+						[ recentBrowser reloadData ];
 					}
 					break;
 
@@ -254,12 +254,12 @@ void gotoMenu()
 						[ transitionView transition:2 toView:savedBrowser ];
 					else if (currentBrowserPage == CB_RECENT)
 					{
-						[ recentBrowser.tableView reloadData ];
+						[ recentBrowser reloadData ];
 						[ transitionView transition:2 toView:recentBrowser ];
 					}
 					else if (currentBrowserPage == CB_BOOKMARKS)
 					{
-						[ bookmarkBrowser.tableView reloadData ];
+						[ bookmarkBrowser reloadData ];
 						[ transitionView transition:2 toView:bookmarkBrowser ];
 					}
 					break;
@@ -386,7 +386,7 @@ void gotoMenu()
 		fclose(out);
 		free(t);
 	}
-	[ bookmarkBrowser.tableView reloadData ];
+	[ bookmarkBrowser reloadData ];
 }
 
 #pragma mark -
@@ -513,7 +513,7 @@ void gotoMenu()
 	{
 		if (preferences.autoSave)
 		{
-			[ savedBrowser.tableView reloadData ];
+			[ savedBrowser reloadData ];
 		}
 		else
 		{
@@ -691,8 +691,8 @@ void gotoMenu()
 	else
 		[ savedBrowser scrollToTop ];
 
-	[ fileBrowser.tableView reloadData ];
-	[ savedBrowser.tableView reloadData ];
+	[ fileBrowser reloadData ];
+	[ savedBrowser reloadData ];
 }
 
 #pragma mark -
@@ -733,12 +733,12 @@ void gotoMenu()
 			currentBrowserPage = CB_SAVED;
 			break;
 		case 3:
-			[ bookmarkBrowser.tableView reloadData ];
+			[ bookmarkBrowser reloadData ];
 			[ transitionView transition:0 toView:bookmarkBrowser ];
 			currentBrowserPage = CB_BOOKMARKS;
 			break;
 		case 4:
-			[ recentBrowser.tableView reloadData ];
+			[ recentBrowser reloadData ];
 			[ transitionView transition:0 toView:recentBrowser ];
 			currentBrowserPage = CB_RECENT;
 			break;
@@ -1145,12 +1145,12 @@ void gotoMenu()
 		[ transitionView transition:1 toView:savedBrowser ];
 	else if (currentBrowserPage == CB_RECENT)
 	{
-		[ recentBrowser.tableView reloadData ];
+		[ recentBrowser reloadData ];
 		[ transitionView transition:1 toView:recentBrowser ];
 	}
 	else if (currentBrowserPage == CB_BOOKMARKS)
 	{
-		[ bookmarkBrowser.tableView reloadData ];
+		[ bookmarkBrowser reloadData ];
 		[ transitionView transition:1 toView:bookmarkBrowser ];
 	}
 
