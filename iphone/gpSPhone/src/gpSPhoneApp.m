@@ -91,7 +91,7 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 		[ noROMSheet addButtonWithTitle:@"OK" ];
 		[ noROMSheet setDelegate:self ];
 		[ noROMSheet showInView:mainView ];
-		[ noRomSheet release ];
+		[ noROMSheet release ];
 	}
 
 	/* Initialize stats bar icons and notification on first good run */
