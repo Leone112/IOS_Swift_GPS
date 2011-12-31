@@ -408,6 +408,7 @@ int End_joypad(void)
 {
 	CloseSerialPort(fileDescriptor);
 	printf("Modem port closed.\n");
+	return 1;
 }
 
 unsigned int old_button = 0;
