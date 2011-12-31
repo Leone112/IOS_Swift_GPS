@@ -80,6 +80,8 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 	if ((file = [ dirEnum nextObject ]))
 	{
 		hasROMs = YES;
+
+		break;
 	}
 	else
 	{
