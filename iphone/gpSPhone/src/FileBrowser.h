@@ -22,6 +22,11 @@
 
 #import "FileTable.h"
 
+@protocol FileBrowserDelegate <NSObject>
+@optional
+- (void)fileBrowser: (FileBrowser *)browser fileSelected:(NSString *)file;
+@end
+
 @interface FileBrowser : UIView 
 {
 	NSMutableArray *_extensions;
@@ -29,7 +34,7 @@
 	FileTable *_table;
 	NSString *_path;
 	int _rowCount;
-	id _delegate;
+	id <FileBrowserDelegate> _delegate;
 	BOOL _saved;
         BOOL _recent;
         BOOL _bookmarks;
@@ -49,7 +54,6 @@
 - (void)setSaved: (BOOL)saved;
 - (BOOL)getSaved;
 - (void)setAllowDeleteROMs: (BOOL)allow;
-- (void)fileBrowser: (FileBrowser *)browser fileSelected:(NSString *)file;
 - (void)scrollToTop;
 - (void)setRecent:(BOOL)recent;
 - (void)setBookmarks:(BOOL)bookmarks;

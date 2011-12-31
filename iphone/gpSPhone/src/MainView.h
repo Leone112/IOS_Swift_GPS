@@ -30,7 +30,7 @@ extern void gotoMenu();
 #define ROM_PATH1 "/var/root/Media/ROMs/GBA"
 #define ROM_PATH2 "/var/mobile/Media/ROMs/GBA"
 
-@interface MainView : UIView 
+@interface MainView : UIView <FileBrowserDelegate>
 {
          NSString *m_currentFile;
 
