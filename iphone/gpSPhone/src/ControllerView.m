@@ -44,6 +44,8 @@ extern int __cheatmenu_run;
 	[ super dealloc ];
 }
 
+#pragma mark -
+
 - (void) drawRect:(CGRect)rect
 {
 	CGRect controllerRect;
@@ -71,10 +73,11 @@ extern int __cheatmenu_run;
 	}
 }
 
-- (BOOL) ignoresMouseEvents
-{
+#pragma mark -
 
-	return NO;
+- (BOOL) userInteractionEnabled
+{
+	return YES
 }
 
 - (BOOL) canHandleGestures
@@ -83,9 +86,10 @@ extern int __cheatmenu_run;
 	return YES;
 }
 
+#pragma mark -
+
 - (void) fixRects
 {
-
 	if (fixedRects == YES)
 		return;
 
@@ -110,7 +114,9 @@ extern int __cheatmenu_run;
 	fixedRects = YES;
 }
 
-- (int) controllerButtonPressed:(GSEvent *)event
+#pragma mark -
+
+- (int) controllerButtonPressed:(UIEvent *)event
 {
 	CGPoint point = GSEventGetLocationInWindow(event);
 
@@ -189,7 +195,9 @@ extern int __cheatmenu_run;
 	return button;
 }
 
-- (void) mouseDown:(GSEvent *)event
+#pragma mark -
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	CGPoint point = GSEventGetLocationInWindow(event);
 	int button = [self controllerButtonPressedAtPoint:point];
@@ -200,7 +208,7 @@ extern int __cheatmenu_run;
 	LOGDEBUG("ControllerView.mouseDown(%d) cPad1:%d", button, cPad1);
 }
 
-- (void) mouseDragged:(GSEvent *)event
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	CGPoint point = GSEventGetLocationInWindow(event);
 	int button;
@@ -218,13 +226,14 @@ extern int __cheatmenu_run;
 	LOGDEBUG("ControllerView.mouseDragged(%d) cPad1:%d", button, cPad1);
 }
 
-- (void) mouseUp:(GSEvent *)event
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-
 	cPad1 = 0;
 
 	LOGDEBUG("ControllerView.mouseUp() cPad1:%d", cPad1);
 }
+
+#pragma mark -
 
 - (void) gestureStarted:(struct __GSEvent *)event
 {
@@ -367,6 +376,8 @@ extern int __cheatmenu_run;
 	}
 
 }
+
+#pragma mark -
 
 - (UIImage *) getControllerImage
 {

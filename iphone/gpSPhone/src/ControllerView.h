@@ -17,7 +17,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <GraphicsServices/GraphicsServices.h>
 #import <UIKit/UIKit.h>
 #import "ScreenView.h"
 #import "gpSPhone_iPhone.h"
@@ -55,9 +54,6 @@
 - (BOOL)ignoresMouseEvents;
 - (void)fixRects;
 - (int)controllerButtonPressed:(struct __GSEvent *)event;
-- (void)mouseDown:(struct __GSEvent *)event;
-- (void)mouseDragged:(struct __GSEvent *)event;
-- (void)mouseUp:(struct __GSEvent *)event;
 - (int)controllerButtonPressedAtPoint:(CGPoint)point;
 - (UIImage *)getControllerImage;
 - (void)drawController;
