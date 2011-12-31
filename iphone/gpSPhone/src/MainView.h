@@ -1,20 +1,20 @@
 /*
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; version 2
- of the License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-*/
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -22,7 +22,7 @@
 #import "FileBrowser.h"
 #import "EmulationView.h"
 
-extern char *__fileName;
+extern char * __fileName;
 extern int __screenOrientation;
 
 extern void gotoMenu();
@@ -32,66 +32,66 @@ extern void gotoMenu();
 
 @interface MainView : UIView <FileBrowserDelegate>
 {
-         NSString *m_currentFile;
+	NSString * m_currentFile;
 
-         CGRect    mainRect;
-         UINavigationBar    *navBar;
-         UITransitionView   *transitionView;
-         FileBrowser        *fileBrowser;
-         FileBrowser        *savedBrowser;
-         FileBrowser        *recentBrowser;
-         FileBrowser        *bookmarkBrowser;
-         EmulationView      *emuView;
-         UIPreferencesTable *prefTable;
-         UIButtonBar        *buttonBar;
-         UINavigationItem   *navItem;
+	CGRect mainRect;
+	UINavigationBar * navBar;
+	UITransitionView * transitionView;
+	FileBrowser * fileBrowser;
+	FileBrowser * savedBrowser;
+	FileBrowser * recentBrowser;
+	FileBrowser * bookmarkBrowser;
+	EmulationView * emuView;
+	UIPreferencesTable * prefTable;
+	UIButtonBar * buttonBar;
+	UINavigationItem * navItem;
 
-         /* Caching for preference table */
-         NSString *currentGameTitle;
+	/* Caching for preference table */
+	NSString * currentGameTitle;
 
-         int       currentView;
-         int       currentBrowserPage;
-         pthread_t emulation_tid;
+	int currentView;
+	int currentBrowserPage;
+	pthread_t emulation_tid;
 
-         UIPreferencesTableCell *cells[20][20];
-         UIPreferencesTableCell *groupcell[10];
-         UISegmentedControl *frameControl;
-	 UISegmentedControl *skinControl;
-         UISegmentedControl *palControl;
-         UISegmentedControl *cpuControl;
-		 UISegmentedControl *volumeControl;
-         UISwitch *sensoryControl;
-	 UISwitch *scaledControl;
-	UISwitch *cheatControl;
-	UISwitch *cheat1Control;
-	UISwitch *cheat2Control;
-	UISwitch *cheat3Control;
-	UISwitch *cheat4Control;
-	UISwitch *cheat5Control;
-	UISwitch *cheat6Control;
-	UISwitch *cheat7Control;
-	UISwitch *cheat8Control;
-	
-	 UISwitch *mutedControl;
+	UIPreferencesTableCell * cells[20][20];
+	UIPreferencesTableCell * groupcell[10];
+	UISegmentedControl * frameControl;
+	UISegmentedControl * skinControl;
+	UISegmentedControl * palControl;
+	UISegmentedControl * cpuControl;
+	UISegmentedControl * volumeControl;
+	UISwitch * sensoryControl;
+	UISwitch * scaledControl;
+	UISwitch * cheatControl;
+	UISwitch * cheat1Control;
+	UISwitch * cheat2Control;
+	UISwitch * cheat3Control;
+	UISwitch * cheat4Control;
+	UISwitch * cheat5Control;
+	UISwitch * cheat6Control;
+	UISwitch * cheat7Control;
+	UISwitch * cheat8Control;
+
+	UISwitch * mutedControl;
 #ifdef DEBUG
-         UISwitch *debugControl;
+	UISwitch * debugControl;
 #endif
-         UISwitch *landscapeControl;
-         UISwitch *delromsControl;
-         UISwitch *autosaveControl;
-         UISwitch *gamegenieControl;
-         UISwitch *enlargeControl;
-         UISwitch *suspendControl;
-         UISwitch *bassControl;
-         UISegmentedControl *spkControl;
-         BOOL allowDeleteROMs;
-         NSString *versionString;
-         UIWindow *parentWindow;
+	UISwitch * landscapeControl;
+	UISwitch * delromsControl;
+	UISwitch * autosaveControl;
+	UISwitch * gamegenieControl;
+	UISwitch * enlargeControl;
+	UISwitch * suspendControl;
+	UISwitch * bassControl;
+	UISegmentedControl * spkControl;
+	BOOL allowDeleteROMs;
+	NSString * versionString;
+	UIWindow * parentWindow;
 
-         UIActionSheet *badROMSheet;
-         UIActionSheet *saveStateSheet;
-         UIActionSheet *selectROMSheet;
-         UIActionSheet *supportSheet;
+	UIActionSheet * badROMSheet;
+	UIActionSheet * saveStateSheet;
+	UIActionSheet * selectROMSheet;
+	UIActionSheet * supportSheet;
 }
 
 - (id)initWithFrame:(CGRect)frame;
@@ -125,26 +125,26 @@ extern void gotoMenu();
 - (void)addBookmark:(NSString *)file;
 - (void)gotoMenu;
 
-#define CUR_BROWSER		0x00
-#define CUR_PREFERENCES		0x01
-#define CUR_EMULATOR		0x02
-#define CUR_EMULATOR_SUSPEND	0x04
+#define CUR_BROWSER          0x00
+#define CUR_PREFERENCES      0x01
+#define CUR_EMULATOR         0x02
+#define CUR_EMULATOR_SUSPEND 0x04
 
-#define CB_NORMAL 0x00
-#define CB_SAVED  0x01
-#define CB_RECENT 0x02
-#define CB_BOOKMARKS 0x03
+#define CB_NORMAL            0x00
+#define CB_SAVED             0x01
+#define CB_RECENT            0x02
+#define CB_BOOKMARKS         0x03
 
-extern NSString *kUIButtonBarButtonAction;
-extern NSString *kUIButtonBarButtonInfo;
-extern NSString *kUIButtonBarButtonInfoOffset;
-extern NSString *kUIButtonBarButtonSelectedInfo;
-extern NSString *kUIButtonBarButtonStyle;
-extern NSString *kUIButtonBarButtonTag;
-extern NSString *kUIButtonBarButtonTarget;
-extern NSString *kUIButtonBarButtonTitle;
-extern NSString *kUIButtonBarButtonTitleVerticalHeight;
-extern NSString *kUIButtonBarButtonTitleWidth;
-extern NSString *kUIButtonBarButtonType;
+extern NSString * kUIButtonBarButtonAction;
+extern NSString * kUIButtonBarButtonInfo;
+extern NSString * kUIButtonBarButtonInfoOffset;
+extern NSString * kUIButtonBarButtonSelectedInfo;
+extern NSString * kUIButtonBarButtonStyle;
+extern NSString * kUIButtonBarButtonTag;
+extern NSString * kUIButtonBarButtonTarget;
+extern NSString * kUIButtonBarButtonTitle;
+extern NSString * kUIButtonBarButtonTitleVerticalHeight;
+extern NSString * kUIButtonBarButtonTitleWidth;
+extern NSString * kUIButtonBarButtonType;
 
 @end

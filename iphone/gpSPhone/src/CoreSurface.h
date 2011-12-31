@@ -3,7 +3,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#define kCoreSurfaceLockTypeGimmeVRAM   3
+#define kCoreSurfaceLockTypeGimmeVRAM 3
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,18 +32,18 @@ unsigned int CoreSurfaceBufferGetPlaneCount(CoreSurfaceBufferRef surface);
 int CoreSurfaceBufferLock(CoreSurfaceBufferRef surface, unsigned int lockType);
 int CoreSurfaceBufferUnlock(CoreSurfaceBufferRef surface);
 int CoreSurfaceBufferWrapClientMemory(CoreSurfaceBufferRef surface);
-void *CoreSurfaceBufferGetBaseAddress(CoreSurfaceBufferRef surface);
+void * CoreSurfaceBufferGetBaseAddress(CoreSurfaceBufferRef surface);
 
 /* Set type to 0. */
 int CoreSurfaceAcceleratorCreate(CFAllocatorRef allocator, int type,
-    CoreSurfaceAcceleratorRef *accel);
+								 CoreSurfaceAcceleratorRef * accel);
 unsigned int CoreSurfaceAcceleratorTransferSurfaceWithSwap(
-    CoreSurfaceAcceleratorRef accelerator, CoreSurfaceBufferRef dest,
-    CoreSurfaceBufferRef src, CFDictionaryRef options);
+	CoreSurfaceAcceleratorRef accelerator, CoreSurfaceBufferRef dest,
+	CoreSurfaceBufferRef src, CFDictionaryRef options);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif // ifndef CORESURFACE_H
 
