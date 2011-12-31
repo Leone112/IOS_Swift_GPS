@@ -131,7 +131,6 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 	{
 		gpSPhone_CloseSound();
 		[ mainView stopEmulator:NO ];
-		[ mainView savePreferences ];
 	}
 }
 
@@ -139,7 +138,6 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 {
 	LOGDEBUG("gpSPhoneApp.applicationDidEnterBackground()");
 
-	[ mainView savePreferences ];
 	if ([mainView getCurrentView] == CUR_EMULATOR)
 		[ mainView suspendEmulator ];
 }
