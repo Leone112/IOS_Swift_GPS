@@ -18,6 +18,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "UITransitionView.h"
 
 #import "FileBrowser.h"
 #import "EmulationView.h"
