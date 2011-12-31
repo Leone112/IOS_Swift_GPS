@@ -76,6 +76,8 @@ int gpSPhone_LoadPreferences();
 
 /* STUBs to emulator core */
 
+FILE * fopen_home(char * filename, char * fileop);
+
 void * gpSPhone_Thread_Start(void * args);
 void * gpSPhone_Thread_Resume(void * args);
 void gpSPhone_Halt(void);
