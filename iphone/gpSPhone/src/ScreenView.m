@@ -16,6 +16,8 @@
  *
  */
 
+#import <QuartzCore/QuartzCore.h>
+
 #import "ScreenView.h"
 #import "gpSPhone_iPhone.h"
 
@@ -33,7 +35,7 @@ void updateScreen()
 	LOGDEBUG("ScreenView.initWithFrame()");
 
 	rect = frame;
-	if ((self == [ super initWithFrame:frame ]) != nil)
+	if ((self = [ super initWithFrame:frame ]) != nil)
 	{
 		sharedInstance = self;
 		[ self initializeGraphics ];
@@ -110,7 +112,7 @@ void updateScreen()
 	if (preferences.landscape)
 	{
 		CGRect FullContentBounds;
-		struct CGSize size = [UIHardware mainScreenSize];
+		struct CGSize size = [[UIScreen mainScreen] bounds].size;
 		FullContentBounds.origin.x = FullContentBounds.origin.y = 0;
 		FullContentBounds.size = CGSizeMake(size.height, size.width);
 		[self setBounds:FullContentBounds];
@@ -139,7 +141,7 @@ void updateScreen()
 	[screenLayer setOpaque:YES];
 
 	LOGDEBUG("ScreenView.initGraphics(): Adding layer as sublayer");
-	[ [ self _layer ] addSublayer:screenLayer ];
+	[ [ self layer ] addSublayer:screenLayer ];
 
 	LOGDEBUG("ScreenView.initGraphics(): Unlocking CoreSurface buffer");
 	CoreSurfaceBufferUnlock(screenSurface);

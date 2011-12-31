@@ -7,7 +7,7 @@ LDFLAGS = -lobjc \
           -framework CoreFoundation \
           -framework Foundation \
           -framework UIKit \
-          -framework LayerKit \
+          -framework QuartzCore \
           -framework CoreGraphics \
           -framework GraphicsServices \
           -framework CoreSurface \
