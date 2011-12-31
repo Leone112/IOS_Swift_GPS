@@ -218,24 +218,21 @@ void gotoMenu()
 			switch (currentView)
 			{
 				case CUR_PREFERENCES:
-					if ([ self savePreferences ] == YES)
+					currentView = CUR_BROWSER;
+					[ self addSubview:tabBar ];
+					if (currentBrowserPage == CB_NORMAL)
+						[ transitionView transition:2 toView:fileBrowser ];
+					else if (currentBrowserPage == CB_SAVED)
+						[ transitionView transition:2 toView:savedBrowser ];
+					else if (currentBrowserPage == CB_RECENT)
 					{
-						currentView = CUR_BROWSER;
-						[ self addSubview:tabBar ];
-						if (currentBrowserPage == CB_NORMAL)
-							[ transitionView transition:2 toView:fileBrowser ];
-						else if (currentBrowserPage == CB_SAVED)
-							[ transitionView transition:2 toView:savedBrowser ];
-						else if (currentBrowserPage == CB_RECENT)
-						{
-							[ recentBrowser.tableView reloadData ];
-							[ transitionView transition:2 toView:recentBrowser ];
-						}
-						else if (currentBrowserPage == CB_BOOKMARKS)
-						{
-							[ bookmarkBrowser.tableView reloadData ];
-							[ transitionView transition:2 toView:bookmarkBrowser ];
-						}
+						[ recentBrowser.tableView reloadData ];
+						[ transitionView transition:2 toView:recentBrowser ];
+					}
+					else if (currentBrowserPage == CB_BOOKMARKS)
+					{
+						[ bookmarkBrowser.tableView reloadData ];
+						[ transitionView transition:2 toView:bookmarkBrowser ];
 					}
 					break;
 
@@ -700,64 +697,6 @@ void gotoMenu()
 
 #pragma mark -
 
-- (BOOL) savePreferences
-{
-	BOOL ret = YES;
-
-	LOGDEBUG("savePreferences: currentView %d", currentView);
-
-	if (currentView != CUR_PREFERENCES)
-		return YES;
-
-	preferences.frameSkip = [ frameControl selectedSegment ];
-	preferences.volume = [ volumeControl selectedSegment ];
-	preferences.selectedSkin = [ skinControl selectedSegment ];
-
-#ifdef DEBUG
-	IS_DEBUG = [ debugControl value ];
-	if (IS_DEBUG != preferences.debug)
-	{
-		EmulationView * _newEmuView = [ self createEmulationView ];
-		[emuView release];
-		emuView = _newEmuView;
-	}
-	preferences.debug = IS_DEBUG;
-#else
-	preferences.debug = 0;
-	IS_DEBUG = 0;
-#endif
-
-	preferences.canDeleteROMs   = [ delromsControl value ];
-	if (preferences.canDeleteROMs)
-	{
-		[ fileBrowser setAllowDeleteROMs:YES ];
-		allowDeleteROMs = YES;
-	}
-	else
-	{
-		[ fileBrowser setAllowDeleteROMs:NO ];
-		allowDeleteROMs = NO;
-	}
-
-	preferences.autoSave        = [ autosaveControl value ];
-	preferences.landscape       = [ landscapeControl value ];
-	preferences.muted           = [ mutedControl value ];
-	preferences.scaled          = [ scaledControl value ];
-	preferences.cheating        = [ cheatControl value ];
-	preferences.cheat1          = [ cheat1Control value ];
-	preferences.cheat2          = [ cheat2Control value ];
-	preferences.cheat3          = [ cheat3Control value ];
-	preferences.cheat4          = [ cheat4Control value ];
-	preferences.cheat5          = [ cheat5Control value ];
-	preferences.cheat6          = [ cheat6Control value ];
-	preferences.cheat7          = [ cheat7Control value ];
-	preferences.cheat8          = [ cheat8Control value ];
-
-	gpSPhone_SavePreferences();
-
-	return ret;
-}
-
 - (UIButtonBar *) createTabBar
 {
 	UITabBar * bar = [ [ UITabBar alloc ] init ];
@@ -929,24 +868,44 @@ void gotoMenu()
 				case (0):
 					cell.textLabel.text = @"Auto-Save Game";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.autoSave = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.autoSave];
 					break;
 				case (1):
 					cell.textLabel.text = @"Landscape View";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.landscape = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.landscape];
 					break;
 				case (2):
 					cell.textLabel.text = @"Mute Sound";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.muted = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.muted];
 					break;
 				case (3):
 					cell.textLabel.text = @"Volume Percent";
 					cell.controlClass = [UISegmentedControl class];
+					cell.controlBlock = ^(UISegmentedControl *segmentedControl) {
+						preferences.volume = segmentedControl.selectedSegmentIndex;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control insertSegment:0 withTitle:@"10" animated:NO ];
 					[cell.control insertSegment:1 withTitle:@"20" animated:NO ];
@@ -966,6 +925,11 @@ void gotoMenu()
 				case (0):
 					cell.textLabel.text = @"Frame Skip";
 					cell.controlClass = [UISegmentedControl class];
+					cell.controlBlock = ^(UISegmentedControl *segmentedControl) {
+						preferences.frameSkip = segmentedControl.selectedSegmentIndex;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control insertSegment:0 withTitle:@"0" animated:NO ];
 					[cell.control insertSegment:1 withTitle:@"1" animated:NO ];
@@ -979,12 +943,22 @@ void gotoMenu()
 				case (1):
 					cell.textLabel.text = @"Can Delete ROMs";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.canDeleteROMs = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.canDeleteROMs];
 					break;
 				case (2):
 					cell.textLabel.text = @"Selected Skin";
 					cell.controlClass = [UISegmentedControl class];
+					cell.controlBlock = ^(UISegmentedControl *segmentedControl) {
+						preferences.selectedSkin = segmentedControl.selectedSegmentIndex;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control insertSegment:0 withTitle:@"0" animated:NO ];
 					[cell.control insertSegment:1 withTitle:@"1" animated:NO ];
@@ -998,60 +972,110 @@ void gotoMenu()
 				case (3):
 					cell.textLabel.text = @"Enable Scaling";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.scaled = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.scaled];
 					break;
 				case (4):
 					cell.textLabel.text = @"Enable Cheating";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.cheating = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.cheating];
 					break;
 				case (5):
 					cell.textLabel.text = @"Enable Cheat 1";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.cheat1 = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.cheat1];
 					break;
 				case (6):
 					cell.textLabel.text = @"Enable Cheat 2";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.cheat2 = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.cheat2];
 					break;
 				case (7):
 					cell.textLabel.text = @"Enable Cheat 3";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.cheat3 = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.cheat3];
 					break;
 				case (8):
 					cell.textLabel.text = @"Enable Cheat 4";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.cheat4 = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.cheat4];
 					break;
 				case (9):
 					cell.textLabel.text = @"Enable Cheat 5";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.cheat5 = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.cheat5];
 					break;
 				case (10):
 					cell.textLabel.text = @"Enable Cheat 6";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.cheat6 = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.cheat6];
 					break;
 				case (11):
 					cell.textLabel.text = @"Enable Cheat 7";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.cheat7 = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.cheat7];
 					break;
 				case (12):
 					cell.textLabel.text = @"Enable Cheat 8";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.cheat8 = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.cheat8];
 					break;
@@ -1059,6 +1083,11 @@ void gotoMenu()
 #ifdef DEBUG
 					cell.textLabel.text = @"Debug Mode";
 					cell.controlClass = [UISwitch class];
+					cell.controlBlock = ^(UISwitch *switchControl) {
+						preferences.debug = switchControl.on;
+
+						gpSPhone_SavePreferences();
+					};
 
 					[cell.control setOn:preferences.debug];
 #else

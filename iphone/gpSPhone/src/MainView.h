@@ -72,7 +72,6 @@ extern void gotoMenu();
 - (EmulationView *)createEmulationView;
 - (UINavigationBar *)createNavBar;
 - (UITransitionView *)createTransitionView:(int)offset;
-- (BOOL)savePreferences;
 - (int)getCurrentView;
 - (void)reloadBrowser;
 - (UITabBar *)createTabBar;

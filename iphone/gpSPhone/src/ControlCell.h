@@ -1,4 +1,4 @@
-typedef void (^ControlBlock)(UIControl *control);
+typedef void (^ControlBlock)(id control);
 
 @interface ControlCell : UITableViewCell
 @property (nonatomic, assign) Class controlClass;
