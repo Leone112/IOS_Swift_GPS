@@ -208,7 +208,7 @@ ASM_FUNC_NAME(arm_update_gba_##name)                                         ;\
 2:                                                                           ;\
   load_registers_thumb()                  /* load Thumb regs               */;\
   call_c_function(block_lookup_address_thumb)                                ;\
-  restore_regs()                                                             ;\  
+  restore_regs()                                                             ;\
   restore_flags()                                                            ;\
   bx r0                                   /* jump to new ARM block         */;\
 
