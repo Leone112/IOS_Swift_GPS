@@ -17,12 +17,10 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <UIKit/UIPreferencesTableCell.h>
-#import <UIKit/UIPreferencesTextTableCell.h>
-#import <UIKit/UIAlertSheet.h>
 
 #import "MainView.h"
 #import "gpSPhone_iPhone.h"
+#import "ControlCell.h"
 
 #import <errno.h>
 #import <sys/types.h>
@@ -638,9 +636,7 @@ void gotoMenu()
 	float offset = 48.0 * 2; /* nav bar + button bar */
 
 	LOGDEBUG("MainView.createBrowser(): Initializing");
-	FileBrowser * browser = [ [ FileBrowser alloc ] initWithFrame:
-							  CGRectMake(0, 0, mainRect.size.width, mainRect.size.height - offset)
-		];
+	FileBrowser * browser = [ [ FileBrowser alloc ] init];
 
 	[ browser setSaved:NO ];
 
@@ -658,7 +654,6 @@ void gotoMenu()
 	[ browser setDelegate:self ];
 	[ browser setAllowDeleteROMs:allowDeleteROMs ];
 
-	LOGDEBUG("MainView.createBrowser(): Done");
 	return browser;
 }
 
@@ -900,45 +895,6 @@ void gotoMenu()
 	[ pref setDataSource:self ];
 	[ pref setDelegate:self ];
 
-	CGSize size;
-	size.height = 1;
-	size.width = 1;
-
-	int i, j;
-	for (i = 0; i < 20; i++)
-		for (j = 0; j < 20; j++)
-			cells[i][j] = NULL;
-
-	frameControl = [[UISegmentedControl alloc]
-					initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 55.0f)];
-	[ frameControl insertSegment:0 withTitle:@"0" animated:NO ];
-	[ frameControl insertSegment:1 withTitle:@"1" animated:NO ];
-	[ frameControl insertSegment:2 withTitle:@"2" animated:NO ];
-	[ frameControl insertSegment:3 withTitle:@"3" animated:NO ];
-	[ frameControl insertSegment:4 withTitle:@"4" animated:NO ];
-	[ frameControl insertSegment:5 withTitle:@"A" animated:NO ];
-	[ frameControl selectSegment:preferences.frameSkip ];
-
-	volumeControl = [[UISegmentedControl alloc]
-					 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 55.0f)];
-	[ volumeControl insertSegment:0 withTitle:@"10" animated:NO ];
-	[ volumeControl insertSegment:1 withTitle:@"20" animated:NO ];
-	[ volumeControl insertSegment:2 withTitle:@"40" animated:NO ];
-	[ volumeControl insertSegment:3 withTitle:@"60" animated:NO ];
-	[ volumeControl insertSegment:4 withTitle:@"80" animated:NO ];
-	[ volumeControl insertSegment:5 withTitle:@"100" animated:NO ];
-	[ volumeControl selectSegment:preferences.volume ];
-
-	skinControl = [[UISegmentedControl alloc]
-				   initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 55.0f)];
-	[ skinControl insertSegment:0 withTitle:@"0" animated:NO ];
-	[ skinControl insertSegment:1 withTitle:@"1" animated:NO ];
-	[ skinControl insertSegment:2 withTitle:@"2" animated:NO ];
-	[ skinControl insertSegment:3 withTitle:@"3" animated:NO ];
-	[ skinControl insertSegment:4 withTitle:@"4" animated:NO ];
-	[ skinControl insertSegment:5 withTitle:@"5" animated:NO ];
-	[ skinControl selectSegment:preferences.selectedSkin ];
-
 	NSString * verString = [ [NSString alloc] initWithCString:VERSION ];
 	versionString = [ [ NSString alloc ] initWithFormat:@"Version %@", verString ];
 	[ verString release ];
@@ -974,57 +930,49 @@ void gotoMenu()
 
 #pragma mark -
 
-- (int) numberOfGroupsInPreferencesTable:(UIPreferencesTable *)aTable
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
 	return 2;
 }
 
-- (int) preferencesTable:(UIPreferencesTable *)aTable numberOfRowsInGroup:(int)group
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	switch (group)
+	switch (section)
 	{
 		case (0):
 			return 4;
-			break;
 		case (1):
 #ifdef DEBUG
 			return 15;
-#else
-			return 14;
 #endif
-			break;
+			return 14;
 	}
 }
 
-- (UIPreferencesTableCell *) preferencesTable:(UIPreferencesTable *)aTable cellForGroup:(int)group
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	if (groupcell[group] != NULL)
-		return groupcell[group];
-
-	groupcell[group] = [[UIPreferencesTableCell alloc] init];
-
-	if (group == 0)
+	if (section == 0)
 	{
-		[ groupcell[group] setTitle:@"Game Options" ];
+		return @"Game Options";
 	}
-	else if (group == 1)
+	else if (section == 1)
 	{
-		[ groupcell[group] setTitle:@"Advanced Options" ];
+		return @"Advanced Options";
 	}
-	return groupcell[group];
+
+	return nil;
 }
 
-- (float) preferencesTable:(UIPreferencesTable *)aTable heightForRow:(int)row inGroup:(int)group withProposedHeight:(float)proposed
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
-	if (row == -1)
+	if (indexPath.row == -1)
 	{
 		return 40;
 	}
 
-	if (group == 1)
+	if (indexPath.section == 1)
 	{
-		switch (row)
+		switch (indexPath.row)
 		{
 			case 0:
 				return 55;
@@ -1033,22 +981,17 @@ void gotoMenu()
 		}
 	}
 
-	return proposed;
+	return 44.;
 }
 
-- (BOOL) preferencesTable:(UIPreferencesTable *)aTable isLabelGroup:(int)group
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return NO;
-}
+	ControlCell * cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+	if (!cell)
+	{
+		cell = [[[ControlCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"] autorelease];
+	}
 
-- (UIPreferencesTableCell *) preferencesTable:(UIPreferencesTable *)aTable cellForRow:(int)row inGroup:(int)group
-{
-	if (cells[row][group] != NULL)
-		return cells[row][group];
-
-	UIPreferencesTableCell * cell;
-
-	cell = [[UIPreferencesTableCell alloc] init];
 #ifdef DEBUG
 	if (group == 1 && row == 14)
 #else
@@ -1064,30 +1007,35 @@ void gotoMenu()
 			switch (row)
 			{
 				case (0):
-					[ cell setTitle:@"Auto-Save Game" ];
-					autosaveControl = [[UISwitch alloc]
-									   initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ autosaveControl setValue:preferences.autoSave ];
-					[ cell addSubview:autosaveControl ];
+					cell.textLabel.text = @"Auto-Save Game";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.autoSave];
 					break;
 				case (1):
-					[ cell setTitle:@"Landscape View" ];
-					landscapeControl = [ [ UISwitch alloc ]
-										 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ landscapeControl setValue:preferences.landscape ];
-					[ cell addSubview:landscapeControl ];
+					cell.textLabel.text = @"Landscape View";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.landscape];
 					break;
 				case (2):
-					[ cell setTitle:@"Mute Sound" ];
-					mutedControl = [ [ UISwitch alloc ]
-									 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ mutedControl setValue:preferences.muted ];
-					[ cell addSubview:mutedControl ];
+					cell.textLabel.text = @"Mute Sound";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.muted];
 					break;
 				case (3):
-					[ cell setTitle:@"Volume Percent" ];
-					[ volumeControl selectSegment:preferences.volume ];
-					[ cell addSubview:volumeControl ];
+					cell.textLabel.text = @"Volume Percent";
+					cell.controlClass = [UISegmentedControl class];
+
+					[cell.control insertSegment:0 withTitle:@"10" animated:NO ];
+					[cell.control insertSegment:1 withTitle:@"20" animated:NO ];
+					[cell.control insertSegment:2 withTitle:@"40" animated:NO ];
+					[cell.control insertSegment:3 withTitle:@"60" animated:NO ];
+					[cell.control insertSegment:4 withTitle:@"80" animated:NO ];
+					[cell.control insertSegment:5 withTitle:@"100" animated:NO ];
+
+					[cell.control selectSegment:preferences.volume ];
 					break;
 			}
 			break;
@@ -1096,117 +1044,115 @@ void gotoMenu()
 			switch (row)
 			{
 				case (0):
-					[ cell setTitle:@"Frame Skip" ];
-					[ frameControl selectSegment:preferences.frameSkip ];
-					[ cell addSubview:frameControl ];
+					cell.textLabel.text = @"Frame Skip";
+					cell.controlClass = [UISegmentedControl class];
+
+					[cell.control insertSegment:0 withTitle:@"0" animated:NO ];
+					[cell.control insertSegment:1 withTitle:@"1" animated:NO ];
+					[cell.control insertSegment:2 withTitle:@"2" animated:NO ];
+					[cell.control insertSegment:3 withTitle:@"3" animated:NO ];
+					[cell.control insertSegment:4 withTitle:@"4" animated:NO ];
+					[cell.control insertSegment:5 withTitle:@"A" animated:NO ];
+
+					[cell.control selectSegment:preferences.frameSkip ];
 					break;
 				case (1):
-					[ cell setTitle:@"Can Delete ROMs" ];
-					delromsControl = [[UISwitch alloc]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ delromsControl setAlternateColors:YES ];
-					[ delromsControl setValue:preferences.canDeleteROMs ];
-					[ cell addSubview:delromsControl ];
+					cell.textLabel.text = @"Can Delete ROMs";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.canDeleteROMs];
 					break;
 				case (2):
-					[ cell setTitle:@"Selected Skin" ];
-					[ skinControl selectSegment:preferences.selectedSkin ];
-					[ cell addSubview:skinControl ];
+					cell.textLabel.text = @"Selected Skin";
+					cell.controlClass = [UISegmentedControl class];
+
+					[cell.control insertSegment:0 withTitle:@"0" animated:NO ];
+					[cell.control insertSegment:1 withTitle:@"1" animated:NO ];
+					[cell.control insertSegment:2 withTitle:@"2" animated:NO ];
+					[cell.control insertSegment:3 withTitle:@"3" animated:NO ];
+					[cell.control insertSegment:4 withTitle:@"4" animated:NO ];
+					[cell.control insertSegment:5 withTitle:@"5" animated:NO ];
+
+					[cell.control selectSegment:preferences.selectedSkin ];
 					break;
 				case (3):
-					[ cell setTitle:@"Enable Scaling" ];
-					scaledControl = [ [ UISwitch alloc ]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ scaledControl setValue:preferences.scaled ];
-					[ cell addSubview:scaledControl ];
+					cell.textLabel.text = @"Enable Scaling";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.scaled];
 					break;
 				case (4):
-					[ cell setTitle:@"Enable Cheating" ];
-					cheatControl = [ [ UISwitch alloc ]
-									 initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ cheatControl setValue:preferences.cheating ];
-					[ cell addSubview:cheatControl ];
+					cell.textLabel.text = @"Enable Cheating";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.cheating];
 					break;
 				case (5):
-					[ cell setTitle:@"Enable Cheat 1" ];
-					cheat1Control = [ [ UISwitch alloc ]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ cheat1Control setValue:preferences.cheat1 ];
-					[ cell addSubview:cheat1Control ];
+					cell.textLabel.text = @"Enable Cheat 1";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.cheat1];
 					break;
 				case (6):
-					[ cell setTitle:@"Enable Cheat 2" ];
-					cheat2Control = [ [ UISwitch alloc ]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ cheat2Control setValue:preferences.cheat2 ];
-					[ cell addSubview:cheat2Control ];
+					cell.textLabel.text = @"Enable Cheat 2";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.cheat2];
 					break;
 				case (7):
-					[ cell setTitle:@"Enable Cheat 3" ];
-					cheat3Control = [ [ UISwitch alloc ]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ cheat3Control setValue:preferences.cheat3 ];
-					[ cell addSubview:cheat3Control ];
+					cell.textLabel.text = @"Enable Cheat 3";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.cheat3];
 					break;
 				case (8):
-					[ cell setTitle:@"Enable Cheat 4" ];
-					cheat4Control = [ [ UISwitch alloc ]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ cheat4Control setValue:preferences.cheat4 ];
-					[ cell addSubview:cheat4Control ];
+					cell.textLabel.text = @"Enable Cheat 4";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.cheat4];
 					break;
 				case (9):
-					[ cell setTitle:@"Enable Cheat 5" ];
-					cheat5Control = [ [ UISwitch alloc ]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ cheat5Control setValue:preferences.cheat5 ];
-					[ cell addSubview:cheat5Control ];
+					cell.textLabel.text = @"Enable Cheat 5";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.cheat5];
 					break;
 				case (10):
-					[ cell setTitle:@"Enable Cheat 6" ];
-					cheat6Control = [ [ UISwitch alloc ]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ cheat6Control setValue:preferences.cheat6 ];
-					[ cell addSubview:cheat6Control ];
+					cell.textLabel.text = @"Enable Cheat 6";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.cheat6];
 					break;
 				case (11):
-					[ cell setTitle:@"Enable Cheat 7" ];
-					cheat7Control = [ [ UISwitch alloc ]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ cheat7Control setValue:preferences.cheat7 ];
-					[ cell addSubview:cheat7Control ];
+					cell.textLabel.text = @"Enable Cheat 7";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.cheat7];
 					break;
 				case (12):
-					[ cell setTitle:@"Enable Cheat 8" ];
-					cheat8Control = [ [ UISwitch alloc ]
-									  initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ cheat8Control setValue:preferences.cheat8 ];
-					[ cell addSubview:cheat8Control ];
+					cell.textLabel.text = @"Enable Cheat 8";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.cheat8];
 					break;
-#ifdef DEBUG
 				case (13):
-					[ cell setTitle:@"Debug Mode" ];
-					debugControl = [[UISwitch alloc]
-									initWithFrame:CGRectMake(170.0f, 5.0f, 120.0f, 30.0f)];
-					[ debugControl setValue:preferences.debug ];
-					[ debugControl setAlternateColors:YES ];
-					[ cell addSubview:debugControl ];
+#ifdef DEBUG
+					cell.textLabel.text = @"Debug Mode";
+					cell.controlClass = [UISwitch class];
+
+					[cell.control setOn:preferences.debug];
+#else
+					cell.textLabel.text = versionString
+#endif
 					break;
 				case (14):
-					[ cell setValue:versionString ];
+					cell.textLabel.text = versionString
 					break;
-#else
-				case (13):
-					[ cell setValue:versionString ];
-					break;
-#endif
-
 			}
 			break;
 	}
 
-	cells[row][group] = cell;
-	return cells[row][group];
+	return cell;
 }
 
 #pragma mark -
@@ -1219,7 +1165,7 @@ void gotoMenu()
 - (void) reloadButtonBar
 {
 	[ buttonBar removeFromSuperview ];
-	[ buttonBar release ];
+	[ buttonBar release ], buttonBar = nil;
 	buttonBar = [ self createButtonBar ];
 }
 
