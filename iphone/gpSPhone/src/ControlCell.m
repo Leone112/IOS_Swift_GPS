@@ -1,6 +1,6 @@
 #import "SegmentedCell.h"
 
-@implementation SegmentedCell
+@implementation ControlCell
 - (id) initWithStyle:(UITableViewCellStyle) style reuseIdentifier:(NSString *) reuseIdentifier {
 	if (!(self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]))
 		return nil;
@@ -19,33 +19,35 @@
 #pragma mark -
 
 @synthesize control;
-@synthesize controlClass;
+@synthesize controlBlock;
 
 - (void) setControlClass:(Class) newControlClass {
 	NSAssert([controlClass isKindOfClass:[UIControl class]], @"Control class must be a subclass of UIControl");
 
 	controlClass = newControlClass;
 
+	id old = control;
 	control = [[controlClass alloc] initWithFrame:CGRectZero];
+	[old release];
+
+	[control addTarget:self action:@selector(valueChanged:) forControlEvent:UIControlEventValueChanged];
 
 	[self.contentView addSubview:control];
-}
-
-- (SEL) controlAction {
-	NSArray *actions = [control actionsForTarget:nil forControlEvent:UIControlEventValueChanged];
-	if (!actions.count)
-		return NULL;
-	return NSSelectorFromString([actions objectAtIndex:0]);
-}
-
-- (void) setControlAction:(SEL) action {
-	[control removeTarget:nil action:NULL forControlEvents:UIControlEventValueChanged];
-	[control addTarget:nil action:action forControlEvents:UIControlEventValueChanged];
 }
 
 - (void) setEnabled:(BOOL) enabled
 {
 	[control setEnabled:enabled];
+}
+
+#pragma mark -
+
+- (void) valueChanged:(id) sender
+{
+	if (controlBlock)
+	{
+		controlBlock(self);
+	}
 }
 
 #pragma mark -
@@ -59,6 +61,11 @@
 	[control release], control = nil;
 
 	controlClass = NULL;
+
+	if (controlBlock)
+	{
+		Block_release(controlBlock);
+	}
 }
 
 - (void) layoutSubviews {
