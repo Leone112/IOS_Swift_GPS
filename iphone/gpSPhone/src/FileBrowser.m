@@ -16,7 +16,11 @@
  *
  */
 
+#import <UIKit/UIKit.h>
+
 #import "FileBrowser.h"
+
+#import "gpSPhone_iPhone.h"
 
 @implementation FileBrowser
 @synthesize path = _path;
@@ -24,7 +28,7 @@
 
 - (id) init
 {
-	if ((self == [super initWithStyle:UITableViewStylePlain]) != nil)
+	if ((self = [super initWithStyle:UITableViewStylePlain]) != nil)
 	{
 		self.tableView.dataSource = self;
 		self.tableView.delegate = self;
@@ -48,6 +52,8 @@
 	[super dealloc];
 }
 
+#pragma mark -
+
 - (NSString *) path
 {
 	return [[_path copy] autorelease];
@@ -62,6 +68,8 @@
 	[self.tableView reloadData];
 }
 
+#pragma mark -
+
 - (void) addExtension:(NSString *)extension
 {
 	if (![_extensions containsObject:[extension lowercaseString]])
@@ -74,6 +82,8 @@
 {
 	[_extensions setArray:extensions];
 }
+
+#pragma mark -
 
 - (void) reloadData
 {
@@ -125,7 +135,7 @@
 			while ((fgets(buff, sizeof(buff), file)) != NULL)
 			{
 				buff[strlen(buff) - 1] = 0;
-				NSString * string = [ [ NSString alloc ] initWithCString:buff ];
+				NSString * string = [ [ NSString alloc ] initWithCString:buff encoding:NSUTF8StringEncoding ];
 				[ _files addObject:string ];
 				[ string release ];
 			}
@@ -140,12 +150,7 @@
 		_files = [ [ NSMutableArray alloc] initWithArray:sorted ];
 	}
 
-	[_table reloadData];
-}
-
-- (void) setDelegate:(id)delegate
-{
-	_delegate = delegate;
+	[self.tableView reloadData];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -160,24 +165,25 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSString * file = [_path stringByAppendingPathComponent:[_files objectAtIndex:[ _table _rowForTableCell:self]]];
+	NSString * file = [_path stringByAppendingPathComponent:[_files objectAtIndex:indexPath.row]];
 	char * fn = (char *)[file cStringUsingEncoding:NSASCIIStringEncoding];
 
 	LOGDEBUG("UIDeletableCell._willBeDeleted: %s", fn);
 
-	if ((!strcmp(fn + (strlen(fn) - 4), ".svs"))
-		|| (!strcasecmp(fn + (strlen(fn) - 4), ".zip"))
-		|| (!strcasecmp(fn + (strlen(fn) - 4), ".gba")))
+	if (!strcmp(fn + (strlen(fn) - 4), ".svs") ||
+		!strcasecmp(fn + (strlen(fn) - 4), ".zip") ||
+		!strcasecmp(fn + (strlen(fn) - 4), ".gba"))
 	{
-		if ([ _table getBookmarks ] == YES)
-			FILE * in, * out;
+		if (_bookmarks == YES) {
+			FILE * in;
+			FILE * out;
 
 			in = fopen_home("Library/Preferences/gpSPhone.bookmarks", "r");
 			out = fopen("/tmp/gpSPhone.bookmarks", "w");
 			if (out)
 			{
 				char * s, * t, * u;
-				t = strdup(file);
+				t = strdup(fn);
 				s = strtok(t, "/");
 				while (s)
 				{
@@ -203,22 +209,25 @@
 				rename("/tmp/gpSPhone.bookmarks", "/var/mobile/Library/Preferences/gpSPhone.bookmarks");
 				rename("/tmp/gpSPhone.bookmarks", "/var/root/Library/Preferences/gpSPhone.bookmarks");
 			}
+		}
 		else
+		{
 			unlink(fn);
+		}
 	}
 
-	[ _files removeObjectAtIndex:[ _table _rowForTableCell:self ] ];
+	[ _files removeObjectAtIndex:indexPath.row ];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"identifier"];
 	if (!cell)
 	{
-		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"] autorelease];
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"identifier"] autorelease];
 	}
 
-	cell.textLabel.text = [[_files objectAtIndex:row] stringByDeletingPathExtension ];
+	cell.textLabel.text = [[_files objectAtIndex:indexPath.row] stringByDeletingPathExtension];
 
 	return cell;
 }
@@ -226,38 +235,30 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	if ( [ _delegate respondsToSelector:@selector( fileBrowser:fileSelected: ) ] )
-		[ _delegate fileBrowser:self fileSelected:[ self selectedFile ] ];
+		[ _delegate fileBrowser:self fileSelected:[_files objectAtIndex:tableView.indexPathForSelectedRow.row ] ];
 }
 
 - (NSString *) selectedFile
 {
-	if ([_table selectedRow] == -1)
+	if (self.tableView.indexPathForSelectedRow.row == -1)
 		return nil;
 
-	return [_path stringByAppendingPathComponent:[_files objectAtIndex:[_table selectedRow]]];
+	return [_path stringByAppendingPathComponent:[_files objectAtIndex:self.tableView.indexPathForSelectedRow.row]];
 }
 
 - (void) setSaved:(BOOL)saved
 {
 	_saved = saved;
-	if (_allowDeleteROMs == NO)
-		[ _table allowDelete:saved ];
 }
 
 - (void) setRecent:(BOOL)recent
 {
 	_recent = recent;
-	[ _table allowDelete:NO ];
 }
 
 - (void) setBookmarks:(BOOL)bookmarks
 {
 	_bookmarks = bookmarks;
-	if (bookmarks == YES)
-	{
-		[ _table setBookmarks:YES ];
-		[ _table allowDelete:YES ];
-	}
 }
 
 - (BOOL) getSaved
@@ -268,7 +269,6 @@
 - (void) setAllowDeleteROMs:(BOOL)allow
 {
 	_allowDeleteROMs = allow;
-	[ _table allowDelete:allow ];
 }
 
 - (void) fileBrowser:(FileBrowser *)browser fileSelected:(NSString *)file
@@ -278,7 +278,7 @@
 
 - (void) scrollToTop
 {
-	[ _table scrollRowToVisible:0 ];
+	[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO ];
 }
 
 @end
