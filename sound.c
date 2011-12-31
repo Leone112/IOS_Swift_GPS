@@ -23,7 +23,7 @@
 
 extern void sound_callback(void *userdata, u8 *stream, int length);
 
-pthread_mutex_t id;
+pthread_mutex_t id_mutex;
 pthread_mutexattr_t attr;
 pthread_cond_t cond;
 pthread_condattr_t condattr;
@@ -328,7 +328,7 @@ u32 gbc_sound_master_volume;
   while(((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) >        \
    (audio_buffer_size * 2))                                                   \
   {                                                                           \
-    pthread_cond_wait(&cond, &id);                                            \
+    pthread_cond_wait(&cond, &id_mutex);                                            \
   }                                                                           \
 
 #endif
@@ -448,11 +448,11 @@ u32 gbc_sound_master_volume;
 void synchronize_sound()
 {
 #if 0
-  pthread_mutex_lock(&id);
+  pthread_mutex_lock(&id_mutex);
 
   gbc_sound_synchronize();
 
-  pthread_mutex_unlock(&id);
+  pthread_mutex_unlock(&id_mutex);
 #endif
 }
 
@@ -488,7 +488,7 @@ void update_gbc_sound(u32 cpu_ticks)
 #if 0
   if( soundInit == 1 )
   {
-	  pthread_mutex_lock(&id);
+	  pthread_mutex_lock(&id_mutex);
 #if 0
 	  if(synchronize_flag)
 	  {
@@ -500,7 +500,7 @@ void update_gbc_sound(u32 cpu_ticks)
 	       (audio_buffer_size * 3 / 2))
 	      {
 		//pthread_cond_signal(&cond);
-		pthread_cond_wait(&cond, &id);
+		pthread_cond_wait(&cond, &id_mutex);
 	      }
 	#ifdef PSP_BUILD
 	      if(current_frameskip_type == auto_frameskip)
@@ -611,7 +611,7 @@ void update_gbc_sound(u32 cpu_ticks)
 #if 0	
 	  pthread_cond_signal(&cond);
 #endif
-	  pthread_mutex_unlock(&id);
+	  pthread_mutex_unlock(&id_mutex);
   }
 #endif
   gbc_sound_last_cpu_ticks = cpu_ticks;
@@ -674,13 +674,13 @@ void sound_callback(void *userdata, u8 *stream, int length)
     thewaittime.tv_nsec = 100000000; //current_time.tv_usec*1000; //((current_time.tv_usec*1000)+(990000000));
 
     pthread_cond_signal(&cond);
-    pthread_cond_timedwait(&cond, &id, &thewaittime);
+    pthread_cond_timedwait(&cond, &id_mutex, &thewaittime);
 /*
     if(((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) <
       length)
     {
       memset(stream, 0, length);
-  //pthread_mutex_unlock(&id);
+  //pthread_mutex_unlock(&id_mutex);
       return;
     }
 */
@@ -717,7 +717,7 @@ void sound_callback(void *userdata, u8 *stream, int length)
       sound_copy_null(sound_buffer_base, length);
       sound_buffer_base += sample_length;
     }
-    //pthread_mutex_unlock(&id);
+    //pthread_mutex_unlock(&id_mutex);
     return;
   }
 #endif
@@ -725,7 +725,7 @@ void sound_callback(void *userdata, u8 *stream, int length)
 #endif
 
 #if 0
-  pthread_mutex_lock(&id);
+  pthread_mutex_lock(&id_mutex);
 #endif
 
 #if 1
@@ -788,7 +788,7 @@ void sound_callback(void *userdata, u8 *stream, int length)
 #if 0
   pthread_cond_signal(&cond);
 #endif
-  pthread_mutex_unlock(&id);
+  pthread_mutex_unlock(&id_mutex);
 #endif
 }
 #endif
@@ -879,7 +879,7 @@ void sound_exit()
   pthread_condattr_destroy(&condattr);
 #endif
   pthread_mutexattr_destroy(&attr);
-  pthread_mutex_destroy(&id);
+  pthread_mutex_destroy(&id_mutex);
 #endif
 }
 
@@ -924,7 +924,7 @@ void init_sound()
 #if 1
   pthread_mutexattr_init(&attr);
   //pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-  pthread_mutex_init(&id, &attr);
+  pthread_mutex_init(&id_mutex, &attr);
 #if 0
   pthread_condattr_init(&condattr);
   pthread_cond_init(&cond, &condattr);
