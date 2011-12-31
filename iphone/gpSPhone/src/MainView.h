@@ -44,7 +44,7 @@ extern void gotoMenu();
 	FileBrowser * bookmarkBrowser;
 	EmulationView * emuView;
 	UITableView * prefTable;
-	UIButtonBar * buttonBar;
+	UITabBar * tabBar;
 	UINavigationItem * navItem;
 
 	/* Caching for preference table */
@@ -80,7 +80,7 @@ extern void gotoMenu();
 - (BOOL)savePreferences;
 - (int)getCurrentView;
 - (void)reloadBrowser;
-- (UIButtonBar *)createButtonBar;
+- (UITabBar *)createTabBar;
 - (void)buttonBarItemTapped:(id)sender;
 - (NSArray *)buttonBarItems;
 - (void)reloadButtonBar;

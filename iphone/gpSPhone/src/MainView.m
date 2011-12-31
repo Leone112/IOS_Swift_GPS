@@ -68,16 +68,8 @@ void gotoMenu()
 		bookmarkBrowser = [ self createBrowser ];
 		currentBrowserPage = CB_NORMAL;
 
-		if (preferences.canDeleteROMs)
-		{
-			[ fileBrowser setAllowDeleteROMs:YES ];
-			allowDeleteROMs = YES;
-		}
-		else
-		{
-			[ fileBrowser setAllowDeleteROMs:NO ];
-			allowDeleteROMs = NO;
-		}
+		[ fileBrowser setAllowDeleteROMs:preferences.canDeleteROMs ];
+		allowDeleteROMs = preferences.canDeleteROMs;
 
 		[ savedBrowser setSaved:YES ];
 		[ savedBrowser reloadData ];
@@ -88,14 +80,13 @@ void gotoMenu()
 		[ bookmarkBrowser setBookmarks:YES ];
 		[ bookmarkBrowser reloadData ];
 
-
 		[ self addSubview:navBar ];
 
 		[ self addSubview:transitionView ];
 		[ transitionView transition:1 toView:fileBrowser ];
 
-		buttonBar = [ self createButtonBar ];
-		[ self addSubview:buttonBar ];
+		tabBar = [ self createTabBar ];
+		[ self addSubview:tabBar ];
 		LOGDEBUG("MainView.initWithFrame(): Done");
 	}
 
@@ -212,7 +203,7 @@ void gotoMenu()
 					if ([ self savePreferences ] == YES)
 					{
 						currentView = CUR_BROWSER;
-						[ self addSubview:buttonBar ];
+						[ self addSubview:tabBar ];
 						if (currentBrowserPage == CB_NORMAL)
 							[ transitionView transition:2 toView:fileBrowser ];
 						else if (currentBrowserPage == CB_SAVED)
@@ -277,7 +268,7 @@ void gotoMenu()
 					break;
 				case CUR_BROWSER:
 					currentView = CUR_PREFERENCES;
-					[ buttonBar removeFromSuperview ];
+					[ tabBar removeFromSuperview ];
 					[ transitionView transition:1 toView:prefTable ];
 					break;
 
@@ -494,7 +485,7 @@ void gotoMenu()
 	LOGDEBUG("MainView.startEmulator(): Done");
 
 	[ navBar removeFromSuperview ];
-	[ buttonBar removeFromSuperview ];
+	[ tabBar removeFromSuperview ];
 }
 
 - (void) stopEmulator:(BOOL)promptForSave
@@ -772,14 +763,11 @@ void gotoMenu()
 	return ret;
 }
 
-- (UIButtonBar *) createButtonBar
+- (UIButtonBar *) createTabBar
 {
-	UIButtonBar * bar;
-
-	bar = [ [ UIButtonBar alloc ]
-			  initInView:self
-			   withFrame:CGRectMake(0.0f, 431.0f, 320.0f, 49.0f)
-			withItemList:[ self buttonBarItems ] ];
+	UITabBar * bar = [ [ UITabBar alloc ] init ];
+	bar.frame = CGRectMake(0.0f, 431.0f, 320.0f, 49.0f);
+	bar.items = [ self tabBarItems ];
 	[bar setDelegate:self];
 	[bar setBarStyle:1];
 	[bar setButtonBarTrackingMode:2];
@@ -800,62 +788,19 @@ void gotoMenu()
 	return bar;
 }
 
-- (NSArray *) buttonBarItems
+- (NSArray *) tabBarItems
 {
-	return [ NSArray arrayWithObjects:
-			 [ NSDictionary dictionaryWithObjectsAndKeys:
-			   @"buttonBarItemTapped:", kUIButtonBarButtonAction,
-			   @"TopRated.png", kUIButtonBarButtonInfo,
-			   @"TopRated.png", kUIButtonBarButtonSelectedInfo,
-			   [ NSNumber numberWithInt:1], kUIButtonBarButtonTag,
-			   self, kUIButtonBarButtonTarget,
-			   @"All Games", kUIButtonBarButtonTitle,
-			   @"0", kUIButtonBarButtonType,
-			   nil
-			 ],
+	UITabBarItem *allGames = [[[UITabBarItem alloc] initWithTitle:@"All Games" image:[UIImage imageNamed:@"TopRated.png"] tag:1] autorelease];
+	UITabBarItem *savedGames = [[[UITabBarItem alloc] initWithTitle:@"Saved Games" image:[UIImage imageNamed:@"History.png"] tag:2] autorelease];
+	UITabBarItem *bookmarks = [[[UITabBarItem alloc] initWithTitle:@"Bookmarks" image:[UIImage imageNamed:@"Bookmarks.png"] tag:3] autorelease];
+	UITabBarItem *mostRecent = [[[UITabBarItem alloc] initWithTitle:@"Most Recent" image:[UIImage imageNamed:@"MostRecent.png"] tag:4] autorelease];
 
-			 [ NSDictionary dictionaryWithObjectsAndKeys:
-			   @"buttonBarItemTapped:", kUIButtonBarButtonAction,
-			   @"History.png", kUIButtonBarButtonInfo,
-			   @"History.png", kUIButtonBarButtonSelectedInfo,
-			   [ NSNumber numberWithInt:2], kUIButtonBarButtonTag,
-			   self, kUIButtonBarButtonTarget,
-			   @"Saved Games", kUIButtonBarButtonTitle,
-			   @"0", kUIButtonBarButtonType,
-			   nil
-			 ],
-
-			 [ NSDictionary dictionaryWithObjectsAndKeys:
-			   @"buttonBarItemTapped:", kUIButtonBarButtonAction,
-			   @"Bookmarks.png", kUIButtonBarButtonInfo,
-			   @"Bookmarks.png", kUIButtonBarButtonSelectedInfo,
-			   [ NSNumber numberWithInt:3], kUIButtonBarButtonTag,
-			   self, kUIButtonBarButtonTarget,
-			   @"Bookmarks", kUIButtonBarButtonTitle,
-			   @"0", kUIButtonBarButtonType,
-			   nil
-			 ],
-
-			 [ NSDictionary dictionaryWithObjectsAndKeys:
-			   @"buttonBarItemTapped:", kUIButtonBarButtonAction,
-			   @"MostRecent.png", kUIButtonBarButtonInfo,
-			   @"MostRecent.png", kUIButtonBarButtonSelectedInfo,
-			   [ NSNumber numberWithInt:4], kUIButtonBarButtonTag,
-			   self, kUIButtonBarButtonTarget,
-			   @"Most Recent", kUIButtonBarButtonTitle,
-			   @"0", kUIButtonBarButtonType,
-			   nil
-			 ],
-
-			 nil
-	];
+	return [NSArray arrayWithObjects:allGames, savedGames, bookmarks, mostRecent, nil];
 }
 
-- (void) buttonBarItemTapped:(id)sender
+- (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
-	int button = [ sender tag ];
-
-	switch (button)
+	switch ([ item tag ])
 	{
 		case 1:
 			[ transitionView transition:0 toView:fileBrowser ];
@@ -1164,9 +1109,9 @@ void gotoMenu()
 
 - (void) reloadButtonBar
 {
-	[ buttonBar removeFromSuperview ];
-	[ buttonBar release ], buttonBar = nil;
-	buttonBar = [ self createButtonBar ];
+	[ tabBar removeFromSuperview ];
+	[ tabBar release ], tabBar = nil;
+	tabBar = [ self createTabBar ];
 }
 
 - (void) gotoMenu
@@ -1183,7 +1128,7 @@ void gotoMenu()
 
 	LOGDEBUG("MainView.gotoMenu() transition end");
 
-	[ self addSubview:buttonBar ];
+	[ self addSubview:tabBar ];
 
 	[ self addSubview:navBar ];
 	[ self setNavBar ];
