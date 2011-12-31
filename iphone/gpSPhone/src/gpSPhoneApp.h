@@ -18,8 +18,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <UIKit/UIAlert.h>
-#import "MainView.h"
+
 #import "gpSPhone_iPhone.h"
 
 #include <sys/stat.h>

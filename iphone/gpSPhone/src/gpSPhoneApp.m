@@ -21,9 +21,13 @@
 #import <sys/types.h>
 #import <dirent.h>
 
+#import <AudioToolbox/AudioToolbox.h>
+
 float __audioVolume = 1.0;
 
 MainView * mainView;
+
+static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID inPropertyID, UInt32 inPropertyValueSize, const void * inPropertyValue);
 
 @implementation gpSPhoneApp
 - (void) applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -45,7 +49,7 @@ MainView * mainView;
 	[ window addSubview:mainView ];
 	[ window makeKeyAndVisible ];
 
-	noteCurrentSystemVolume(self);
+	noteCurrentSystemVolume(NULL, 0, 0, NULL);
 
 	AudioSessionInitialize(NULL, NULL, NULL, NULL);
 	OSStatus status = AudioSessionAddPropertyListener(kAudioSessionProperty_CurrentHardwareOutputVolume, noteCurrentSystemVolume, self);
