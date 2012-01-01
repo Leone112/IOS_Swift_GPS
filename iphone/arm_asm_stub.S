@@ -168,7 +168,6 @@
 #define load_pc_add()                                                        ;\
   ldr r0, [lr]                                                               ;\
 
-
 #define arm_update_gba_builder(name, mode, return_op)                        ;\
                                                                              ;\
 ASM_FUNC_NAME(arm_update_gba_##name)                                         ;\
@@ -903,10 +902,26 @@ ASM_FUNC_NAME(ptr_read_function_table)
   .long _execute_eeprom_ptr                @ 0x0D: EEPROM
   .long _execute_backup_ptr                @ 0x0E: backup
 
-.rept (256 - 15)                          @ 0x0F - 0xFF: open
-  .long _execute_open_ptr
-.endr
+.macro fake_rept_inner
+  .if $0
+    .long _execute_open_ptr
+    fake_rept_inner ($0-1)
+  .endif
+.endmacro
 
+.macro fake_rept_outer
+  .if $0
+	fake_rept_inner (6)
+    fake_rept_outer ($0-1)
+  .endif
+.endmacro
+
+# run (256 - 15) times
+fake_rept_outer (10)                       @ 0x0F - 0xFF: open
+fake_rept_outer (10)                       @ 0x0F - 0xFF: open
+fake_rept_outer (10)                       @ 0x0F - 0xFF: open
+fake_rept_outer (10)                       @ 0x0F - 0xFF: open
+.long _execute_open_ptr
 
 @ Setup the read function table.
 @ Load this onto the the stack; assume we're free to use r3
