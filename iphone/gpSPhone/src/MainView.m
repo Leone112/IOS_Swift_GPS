@@ -806,6 +806,8 @@ void gotoMenu()
 #endif
 			return 14;
 	}
+
+	return 0;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
