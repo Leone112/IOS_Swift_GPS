@@ -1,7 +1,6 @@
 LANG = en_US.US-ASCII
 PATH = "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 CC = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/clang
-ASM_CC = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc
 LD = $(CC)
 VERSION = 1.8.1
 LDFLAGS = -lobjc \
@@ -32,7 +31,7 @@ gpSPhone:	iphone/gpSPhone/src/JoyPad.o iphone/gpSPhone/src/iphone.o iphone/gpSPh
 	$(CC) ${CFLAGS} -c $< -o $@
 
 %.o:	%.S
-	$(ASM_CC) -arch armv7 -c $< -o $@
+	$(CC) -v -arch armv7 -c $< -o $@
 
 %.z:	%.c
 	$(CC) ${CFLAGS} -S $< -o $@
