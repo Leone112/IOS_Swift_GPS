@@ -911,7 +911,7 @@ ASM_FUNC_NAME(ptr_read_function_table)
 
 .macro fake_rept_outer
   .if $0
-	fake_rept_inner (6)
+    fake_rept_inner (6)
     fake_rept_outer ($0-1)
   .endif
 .endmacro
