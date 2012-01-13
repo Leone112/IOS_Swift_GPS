@@ -909,14 +909,15 @@ void gotoMenu()
 						gpSPhone_SavePreferences();
 					};
 
-					[cell.control insertSegment:0 withTitle:@"10" animated:NO ];
-					[cell.control insertSegment:1 withTitle:@"20" animated:NO ];
-					[cell.control insertSegment:2 withTitle:@"40" animated:NO ];
-					[cell.control insertSegment:3 withTitle:@"60" animated:NO ];
-					[cell.control insertSegment:4 withTitle:@"80" animated:NO ];
-					[cell.control insertSegment:5 withTitle:@"100" animated:NO ];
+					UISegmentedControl *control = (UISegmentedControl *)cell.control;
+					[control insertSegmentWithTitle:@"10" atIndex:0 animated:NO ];
+					[control insertSegmentWithTitle:@"20" atIndex:1 animated:NO ];
+					[control insertSegmentWithTitle:@"40" atIndex:2 animated:NO ];
+					[control insertSegmentWithTitle:@"60" atIndex:3 animated:NO ];
+					[control insertSegmentWithTitle:@"80" atIndex:4 animated:NO ];
+					[control insertSegmentWithTitle:@"100" atIndex:5 animated:NO ];
 
-					[cell.control selectSegment:preferences.volume ];
+					[control setSelectedSegmentIndex:preferences.volume ];
 					break;
 			}
 			break;
@@ -933,14 +934,15 @@ void gotoMenu()
 						gpSPhone_SavePreferences();
 					};
 
-					[cell.control insertSegment:0 withTitle:@"0" animated:NO ];
-					[cell.control insertSegment:1 withTitle:@"1" animated:NO ];
-					[cell.control insertSegment:2 withTitle:@"2" animated:NO ];
-					[cell.control insertSegment:3 withTitle:@"3" animated:NO ];
-					[cell.control insertSegment:4 withTitle:@"4" animated:NO ];
-					[cell.control insertSegment:5 withTitle:@"A" animated:NO ];
+					UISegmentedControl *control = (UISegmentedControl *)cell.control;
+					[control insertSegmentWithTitle:@"0" atIndex:0 animated:NO ];
+					[control insertSegmentWithTitle:@"1" atIndex:1 animated:NO ];
+					[control insertSegmentWithTitle:@"2" atIndex:2 animated:NO ];
+					[control insertSegmentWithTitle:@"3" atIndex:3 animated:NO ];
+					[control insertSegmentWithTitle:@"4" atIndex:4 animated:NO ];
+					[control insertSegmentWithTitle:@"A" atIndex:5 animated:NO ];
 
-					[cell.control selectSegment:preferences.frameSkip ];
+					[control setSelectedSegmentIndex:preferences.frameSkip ];
 					break;
 				case (1):
 					cell.textLabel.text = @"Can Delete ROMs";
@@ -962,14 +964,11 @@ void gotoMenu()
 						gpSPhone_SavePreferences();
 					};
 
-					[cell.control insertSegment:0 withTitle:@"0" animated:NO ];
-					[cell.control insertSegment:1 withTitle:@"1" animated:NO ];
-					[cell.control insertSegment:2 withTitle:@"2" animated:NO ];
-					[cell.control insertSegment:3 withTitle:@"3" animated:NO ];
-					[cell.control insertSegment:4 withTitle:@"4" animated:NO ];
-					[cell.control insertSegment:5 withTitle:@"5" animated:NO ];
+					control = (UISegmentedControl *)cell.control;
+					for (NSUInteger i = 0; i < 6; i++)
+						[control insertSegmentWithTitle:[NSString stringWithFormat:@"%d", i] atIndex:i animated:NO];
 
-					[cell.control selectSegment:preferences.selectedSkin ];
+					[control setSelectedSegmentIndex:preferences.selectedSkin ];
 					break;
 				case (3):
 					cell.textLabel.text = @"Enable Scaling";

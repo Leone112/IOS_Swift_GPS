@@ -96,7 +96,7 @@ extern int __cheatmenu_run;
 	if (fixedRects == YES)
 		return;
 
-	MainView * mainView = [ [ [ self superview] superview ] superview ];
+	MainView * mainView = (MainView *)[ [ [ self superview] superview ] superview ];
 	UpLeft      = [ self convertRect:UpLeft toView:mainView ];
 	DownLeft    = [ self convertRect:DownLeft toView:mainView ];
 	UpRight     = [ self convertRect:UpRight toView:mainView ];
@@ -397,7 +397,7 @@ extern int __cheatmenu_run;
 
 	LOGDEBUG("ControllerView.getControllerImage(): Loading controller image %s",
 			 [ controllerFilename cStringUsingEncoding:NSASCIIStringEncoding ]);
-	image = [ UIImage applicationImageNamed:controllerFilename ];
+	image = [ UIImage imageNamed:controllerFilename ];
 	return image;
 };
 

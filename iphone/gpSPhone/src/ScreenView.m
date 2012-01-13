@@ -29,6 +29,10 @@ void updateScreen()
 	[ sharedInstance performSelectorOnMainThread:@selector(updateScreen) withObject:nil waitUntilDone:NO ];
 }
 
+@interface UIView (Private)
+- (void)setRotationBy:(float)arg1;
+@end
+
 @implementation ScreenView
 - (id) initWithFrame:(CGRect)frame
 {
