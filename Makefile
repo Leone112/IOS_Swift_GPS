@@ -31,10 +31,6 @@ GCC_CFLAGS	= -DARM_ARCH -DGP2X_BUILD -x objective-c -arch armv7 -fnested-functio
 
 all:	gpSPhone
 
-#iphone/video_blend.o 
-
-# -filelist /Users/Zach/Desktop/adsf/build/adsf.build/Debug-iphoneos/adsf.build/Objects-normal/armv7/adsf.LinkFileList -dead_strip -miphoneos-version-min=5.0 -framework CoreSurface -framework UIKit -framework Foundation -framework CoreGraphics -o /Users/Zach/Desktop/adsf/build/Debug-iphoneos/adsf.app/adsf
-
 gpSPhone:	iphone/gpSPhone/src/JoyPad.o iphone/gpSPhone/src/iphone.o iphone/gpSPhone/src/main.o iphone/gpSPhone/src/gpSPhoneApp.o iphone/gpSPhone/src/ControllerView.o iphone/gpSPhone/src/MainView.o iphone/gpSPhone/src/FileBrowser.o iphone/gpSPhone/src/EmulationView.o iphone/gpSPhone/src/ScreenView.o iphone/gpSPhone/src/gpSPhone_iPhone.o iphone/arm_stub_c.o iphone/font.o iphone/display.o cheats.o zip.o gui.o main.o cpu.o sound.o input.o memory.o video.o iphone/arm_asm_stub.o cpu_threaded.o 
 	$(LD) $(LDFLAGS)  -o gpsPhone
 
