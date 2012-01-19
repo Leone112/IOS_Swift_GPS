@@ -67,11 +67,16 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 	NSDirectoryEnumerator * dirEnum = [ [ NSFileManager defaultManager ] enumeratorAtPath:[ paths objectAtIndex:0 ] ];
 
 	NSString * file;
-	if ((file = [ dirEnum nextObject ]))
+	while ((file = [ dirEnum nextObject ]))
 	{
-		hasROMs = YES;
+		if (![file compare:@"gba" options:(NSCaseInsensitiveSearch | NSBackwardsSearch | NSAnchoredSearch)])
+		{
+			hasROMs = YES;
+			break;
+		}
 	}
-	else
+
+	if (!hasROMs)
 	{
 		UIActionSheet * noROMSheet = [ [ UIActionSheet alloc ] initWithFrame:
 									   CGRectMake(0, 240, 320, 240) ];
@@ -80,11 +85,7 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 		[ noROMSheet setDelegate:self ];
 		[ noROMSheet showInView:mainView ];
 		[ noROMSheet release ];
-	}
-
-	/* Initialize stats bar icons and notification on first good run */
-	if (hasROMs == YES)
-	{
+	} else { /* Initialize stats bar icons and notification on first good run */
 		bool feedMe = YES;
 		FILE * f = fopen_home(INIT_PATH, "r");
 		if (f != NULL)
