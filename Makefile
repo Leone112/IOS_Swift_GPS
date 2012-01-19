@@ -1,3 +1,4 @@
+CODESIGN_ALLOCATE=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate
 ARCHS = $(ARCHS_STANDARD_32_BIT)
 LANG = en_US.US-ASCII
 IPHONEOS_DEPLOYMENT_TARGET = 5.0
@@ -30,7 +31,11 @@ CFLAGS	= -DARM_ARCH -DGP2X_BUILD -x objective-c -arch armv7 -miphoneos-version-m
 
 GCC_CFLAGS	= -DARM_ARCH -DGP2X_BUILD -x objective-c -arch armv7 -fnested-functions -fmessage-length=0 -Wno-pointer-sign -Wno-trigraphs -fno-pascal-strings -Os -Wreturn-type -Wparentheses -Wno-format -Wswitch -Wno-unused-parameter -Wunused-value -Wno-shorten-64-to-32 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk -gdwarf-2 -mthumb -msoft-float -funsigned-char -fno-common -fno-builtin -fomit-frame-pointer -fstrict-aliasing -finline -finline-functions -funroll-loops -DVERSION='"$(VERSION)"' -I/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/PrivateFrameworks -I/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/System/Library/Frameworks -F/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/System/Library/Frameworks #look in simulator dir as a cheap way to look for IOKit headers
 
-all:	gpSPhone
+all:	gpSPhone bundle
+
+bundle:
+	codesign -f -s "iPhone Developer" -vv gpsPhone
+	mkdir gpsPhone.app; mv gpsPhone gpsPhone.app
 
 gpSPhone:	iphone/gpSPhone/src/ControlCell.o iphone/gpSPhone/src/JoyPad.o iphone/gpSPhone/src/iphone.o iphone/gpSPhone/src/main.o iphone/gpSPhone/src/gpSPhoneApp.o iphone/gpSPhone/src/ControllerView.o iphone/gpSPhone/src/MainView.o iphone/gpSPhone/src/FileBrowser.o iphone/gpSPhone/src/EmulationView.o iphone/gpSPhone/src/ScreenView.o iphone/gpSPhone/src/gpSPhone_iPhone.o iphone/arm_stub_c.o iphone/font.o iphone/display.o cheats.o zip.o gui.o main.o cpu.o sound.o input.o memory.o video.o iphone/arm_asm_stub.o cpu_threaded.o 
 	$(LD) $(LDFLAGS) iphone/gpSPhone/src/ControlCell.o iphone/gpSPhone/src/JoyPad.o iphone/gpSPhone/src/iphone.o iphone/gpSPhone/src/main.o iphone/gpSPhone/src/gpSPhoneApp.o iphone/gpSPhone/src/ControllerView.o iphone/gpSPhone/src/MainView.o iphone/gpSPhone/src/FileBrowser.o iphone/gpSPhone/src/EmulationView.o iphone/gpSPhone/src/ScreenView.o iphone/gpSPhone/src/gpSPhone_iPhone.o iphone/arm_stub_c.o iphone/font.o iphone/display.o cheats.o zip.o gui.o main.o cpu.o sound.o input.o memory.o video.o iphone/arm_asm_stub.o cpu_threaded.o -o gpsPhone
@@ -50,3 +55,4 @@ gpSPhone:	iphone/gpSPhone/src/ControlCell.o iphone/gpSPhone/src/JoyPad.o iphone/
 clean:
 	rm -f ./*.o iphone/*.o iphone/gpSPhone/*.o iphone/gpSPhone/src/*.o gpSPhone src/*.gch
 	rm -rf ./build
+	rm -rf gpsPhone.app
