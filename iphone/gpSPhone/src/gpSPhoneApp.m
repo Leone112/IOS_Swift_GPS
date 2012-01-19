@@ -63,19 +63,9 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 	}
 
 	/* Determine if we have any ROMs */
-	NSDirectoryEnumerator * dirEnum;
-	DIR * testdir;
-	testdir = opendir(ROM_PATH2);
-	if (testdir != NULL)
-	{
-		dirEnum = [ [ NSFileManager defaultManager ]
-					enumeratorAtPath:@ROM_PATH2 ];
-	}
-	else
-	{
-		dirEnum = [ [ NSFileManager defaultManager ]
-					enumeratorAtPath:@ROM_PATH1 ];
-	}
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSDirectoryEnumerator * dirEnum = [ [ NSFileManager defaultManager ] enumeratorAtPath:[ paths objectAtIndex:0 ] ];
+
 	NSString * file;
 	if ((file = [ dirEnum nextObject ]))
 	{
