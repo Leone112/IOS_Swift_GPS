@@ -62,6 +62,9 @@ void gotoMenu()
 @end
 
 @implementation MainView
++ (MainView *)mainView {
+	return sharedInstance;
+}
 - (id) initWithFrame:(struct CGRect)rect
 {
 	if ((self = [ super initWithFrame:rect ]) != nil)
@@ -103,7 +106,7 @@ void gotoMenu()
 		[ self addSubview:navBar ];
 
 		[ self addSubview:transitionView ];
-		[ transitionView transition:1 toView:fileBrowser ];
+		[ transitionView transition:1 toView:[fileBrowser view] ];
 
 		tabBar = [ self createTabBar ];
 		[ self addSubview:tabBar ];
@@ -221,18 +224,18 @@ void gotoMenu()
 					currentView = CUR_BROWSER;
 					[ self addSubview:tabBar ];
 					if (currentBrowserPage == CB_NORMAL)
-						[ transitionView transition:2 toView:fileBrowser ];
+						[ transitionView transition:2 toView:[fileBrowser view] ];
 					else if (currentBrowserPage == CB_SAVED)
-						[ transitionView transition:2 toView:savedBrowser ];
+						[ transitionView transition:2 toView:[savedBrowser view] ];
 					else if (currentBrowserPage == CB_RECENT)
 					{
 						[ recentBrowser reloadData ];
-						[ transitionView transition:2 toView:recentBrowser ];
+						[ transitionView transition:2 toView:[recentBrowser view] ];
 					}
 					else if (currentBrowserPage == CB_BOOKMARKS)
 					{
 						[ bookmarkBrowser reloadData ];
-						[ transitionView transition:2 toView:bookmarkBrowser ];
+						[ transitionView transition:2 toView:[bookmarkBrowser view] ];
 					}
 					break;
 
@@ -249,18 +252,18 @@ void gotoMenu()
 					[ self stopEmulator:YES];
 					currentView = CUR_BROWSER;
 					if (currentBrowserPage == CB_NORMAL)
-						[ transitionView transition:2 toView:fileBrowser ];
+						[ transitionView transition:2 toView:[fileBrowser view] ];
 					else if (currentBrowserPage == CB_SAVED)
-						[ transitionView transition:2 toView:savedBrowser ];
+						[ transitionView transition:2 toView:[savedBrowser view] ];
 					else if (currentBrowserPage == CB_RECENT)
 					{
 						[ recentBrowser reloadData ];
-						[ transitionView transition:2 toView:recentBrowser ];
+						[ transitionView transition:2 toView:[recentBrowser view] ];
 					}
 					else if (currentBrowserPage == CB_BOOKMARKS)
 					{
 						[ bookmarkBrowser reloadData ];
-						[ transitionView transition:2 toView:bookmarkBrowser ];
+						[ transitionView transition:2 toView:[bookmarkBrowser view] ];
 					}
 					break;
 			}
@@ -725,21 +728,21 @@ void gotoMenu()
 	switch ([ item tag ])
 	{
 		case 1:
-			[ transitionView transition:0 toView:fileBrowser ];
+			[ transitionView transition:0 toView:[fileBrowser view] ];
 			currentBrowserPage = CB_NORMAL;
 			break;
 		case 2:
-			[ transitionView transition:0 toView:savedBrowser ];
+			[ transitionView transition:0 toView:[savedBrowser view] ];
 			currentBrowserPage = CB_SAVED;
 			break;
 		case 3:
 			[ bookmarkBrowser reloadData ];
-			[ transitionView transition:0 toView:bookmarkBrowser ];
+			[ transitionView transition:0 toView:[bookmarkBrowser view] ];
 			currentBrowserPage = CB_BOOKMARKS;
 			break;
 		case 4:
 			[ recentBrowser reloadData ];
-			[ transitionView transition:0 toView:recentBrowser ];
+			[ transitionView transition:0 toView:[recentBrowser view] ];
 			currentBrowserPage = CB_RECENT;
 			break;
 	}
@@ -1141,18 +1144,18 @@ void gotoMenu()
 	LOGDEBUG("MainView.gotoMenu() set navbar");
 
 	if (currentBrowserPage == CB_NORMAL)
-		[ transitionView transition:1 toView:fileBrowser ];
+		[ transitionView transition:1 toView:[fileBrowser view] ];
 	else if (currentBrowserPage == CB_SAVED)
-		[ transitionView transition:1 toView:savedBrowser ];
+		[ transitionView transition:1 toView:[savedBrowser view] ];
 	else if (currentBrowserPage == CB_RECENT)
 	{
 		[ recentBrowser reloadData ];
-		[ transitionView transition:1 toView:recentBrowser ];
+		[ transitionView transition:1 toView:[recentBrowser view] ];
 	}
 	else if (currentBrowserPage == CB_BOOKMARKS)
 	{
 		[ bookmarkBrowser reloadData ];
-		[ transitionView transition:1 toView:bookmarkBrowser ];
+		[ transitionView transition:1 toView:[bookmarkBrowser view] ];
 	}
 
 	LOGDEBUG("MainView.gotoMenu() end");

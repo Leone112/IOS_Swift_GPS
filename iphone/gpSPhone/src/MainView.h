@@ -59,6 +59,8 @@ extern void gotoMenu();
 	UIWindow * parentWindow;
 }
 
++ (MainView *)mainView;
+
 - (id)initWithFrame:(CGRect)frame;
 - (void)dealloc;
 - (void)startEmulator;

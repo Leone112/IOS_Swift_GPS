@@ -96,7 +96,7 @@ extern int __cheatmenu_run;
 	if (fixedRects == YES)
 		return;
 
-	MainView * mainView = (MainView *)[ [ [ self superview] superview ] superview ];
+	MainView * mainView = [MainView mainView];
 	UpLeft      = [ self convertRect:UpLeft toView:mainView ];
 	DownLeft    = [ self convertRect:DownLeft toView:mainView ];
 	UpRight     = [ self convertRect:UpRight toView:mainView ];
