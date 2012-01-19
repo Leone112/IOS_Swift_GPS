@@ -1,6 +1,13 @@
-#import "SegmentedCell.h"
+#import "ControlCell.h"
+
+#import <UIKit/UIControl.h>
+#import <UIKit/UILabel.h>
 
 @implementation ControlCell
+@synthesize control;
+@synthesize controlClass;
+@synthesize controlBlock;
+
 - (id) initWithStyle:(UITableViewCellStyle) style reuseIdentifier:(NSString *) reuseIdentifier {
 	if (!(self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]))
 		return nil;
@@ -18,9 +25,6 @@
 
 #pragma mark -
 
-@synthesize control;
-@synthesize controlBlock;
-
 - (void) setControlClass:(Class) newControlClass {
 	NSAssert([controlClass isKindOfClass:[UIControl class]], @"Control class must be a subclass of UIControl");
 
@@ -30,7 +34,7 @@
 	control = [[controlClass alloc] initWithFrame:CGRectZero];
 	[old release];
 
-	[control addTarget:self action:@selector(valueChanged:) forControlEvent:UIControlEventValueChanged];
+	[(UIControl *)control addTarget:self action:@selector(valueChanged:) forControlEvent:UIControlEventValueChanged];
 
 	[self.contentView addSubview:control];
 }
@@ -71,18 +75,19 @@
 - (void) layoutSubviews {
 	[super layoutSubviews];
 
-	CGSize controlhSize = control.frame.size;
+	UIView *controlView = (UIView *)control;
+	CGSize controlSize = controlView.frame.size;
 	CGRect contentRect = self.contentView.frame;
 
 	UILabel *label = self.textLabel;
 
 	CGRect frame = label.frame;
-	frame.size.width = contentRect.size.width - switchSize.width - 30.;
+	frame.size.width = contentRect.size.width - controlSize.width - 30.;
 	label.frame = frame;
 
-	frame = control.frame;
-	frame.origin.y = round((contentRect.size.height / 2.) - (switchSize.height / 2.));
-	frame.origin.x = contentRect.size.width - switchSize.width - 10.;
-	control.frame = frame;
+	frame = controlView.frame;
+	frame.origin.y = round((contentRect.size.height / 2.) - (controlSize.height / 2.));
+	frame.origin.x = contentRect.size.width - controlSize.width - 10.;
+	controlView.frame = frame;
 }
 @end

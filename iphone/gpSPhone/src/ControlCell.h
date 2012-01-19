@@ -1,3 +1,5 @@
+#import <UIKit/UITableViewCell.h>
+
 typedef void (^ControlBlock)(id control);
 
 @interface ControlCell : UITableViewCell
