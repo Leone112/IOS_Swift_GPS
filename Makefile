@@ -34,8 +34,8 @@ GCC_CFLAGS	= -DARM_ARCH -DGP2X_BUILD -x objective-c -arch armv7 -fnested-functio
 all:	gpSPhone bundle
 
 bundle:
-	codesign -f -s "iPhone Developer" -vv gpsPhone
-	mkdir gpsPhone.app; mv gpsPhone gpsPhone.app
+	codesign -f -s "iPhone Developer: Z" -vv gpsPhone
+	rm -rf gpsPhone.app; mkdir gpsPhone.app; mv gpsPhone gpsPhone.app
 
 gpSPhone:	iphone/gpSPhone/src/ControlCell.o iphone/gpSPhone/src/JoyPad.o iphone/gpSPhone/src/iphone.o iphone/gpSPhone/src/main.o iphone/gpSPhone/src/gpSPhoneApp.o iphone/gpSPhone/src/ControllerView.o iphone/gpSPhone/src/MainView.o iphone/gpSPhone/src/FileBrowser.o iphone/gpSPhone/src/EmulationView.o iphone/gpSPhone/src/ScreenView.o iphone/gpSPhone/src/gpSPhone_iPhone.o iphone/arm_stub_c.o iphone/font.o iphone/display.o cheats.o zip.o gui.o main.o cpu.o sound.o input.o memory.o video.o iphone/arm_asm_stub.o cpu_threaded.o 
 	$(LD) $(LDFLAGS) iphone/gpSPhone/src/ControlCell.o iphone/gpSPhone/src/JoyPad.o iphone/gpSPhone/src/iphone.o iphone/gpSPhone/src/main.o iphone/gpSPhone/src/gpSPhoneApp.o iphone/gpSPhone/src/ControllerView.o iphone/gpSPhone/src/MainView.o iphone/gpSPhone/src/FileBrowser.o iphone/gpSPhone/src/EmulationView.o iphone/gpSPhone/src/ScreenView.o iphone/gpSPhone/src/gpSPhone_iPhone.o iphone/arm_stub_c.o iphone/font.o iphone/display.o cheats.o zip.o gui.o main.o cpu.o sound.o input.o memory.o video.o iphone/arm_asm_stub.o cpu_threaded.o -o gpsPhone
