@@ -26,15 +26,13 @@
 #pragma mark -
 
 - (void) setControlClass:(Class) newControlClass {
-	NSAssert([controlClass isKindOfClass:[UIControl class]], @"Control class must be a subclass of UIControl");
-
 	controlClass = newControlClass;
 
 	id old = control;
 	control = [[controlClass alloc] initWithFrame:CGRectZero];
 	[old release];
 
-	[(UIControl *)control addTarget:self action:@selector(valueChanged:) forControlEvent:UIControlEventValueChanged];
+	[(UIControl *)control addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
 
 	[self.contentView addSubview:control];
 }
