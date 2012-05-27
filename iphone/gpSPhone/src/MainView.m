@@ -627,16 +627,9 @@ void gotoMenu()
 	[ browser setSaved:NO ];
 
 	/* Determine which ROM path */
-	DIR * testdir;
-	testdir = opendir(ROM_PATH2);
-	if (testdir != NULL)
-	{
-		[ browser setPath:@ROM_PATH2 ];
-	}
-	else
-	{
-		[ browser setPath:@ROM_PATH1 ];
-	}
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	[ browser setPath:[ paths objectAtIndex:0 ] ];
+
 	[ browser setDelegate:self ];
 	[ browser setAllowDeleteROMs:allowDeleteROMs ];
 
