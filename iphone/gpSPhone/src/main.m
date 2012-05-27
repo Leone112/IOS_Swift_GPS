@@ -20,24 +20,8 @@
 #import "gpSPhoneApp.h"
 #import "JoyPad.h"
 
-unsigned char main_path[512];
-
-void ChangeWorkingDirectory(char * exe)
-{
-	char * s = strrchr(exe, '/');
-
-	if (s != NULL)
-	{
-		*s = '\0';
-		chdir(exe);
-		*s = '/';
-	}
-}
-
 int main(int argc, char ** argv)
 {
-	ChangeWorkingDirectory(argv[0]);
-	getcwd(main_path, 512);
 	Init_joypad();
 	NSAutoreleasePool * pool = [NSAutoreleasePool new];
 	int ret = UIApplicationMain(argc, argv, NSStringFromClass([gpSPhoneApp class]), NSStringFromClass([gpSPhoneApp class]));
