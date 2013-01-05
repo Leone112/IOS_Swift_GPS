@@ -69,7 +69,12 @@ static void noteCurrentSystemVolume(void * inUserData, AudioSessionPropertyID in
 	NSString * file;
 	while ((file = [ dirEnum nextObject ]))
 	{
-		if (![file compare:@"gba" options:(NSCaseInsensitiveSearch | NSBackwardsSearch | NSAnchoredSearch)])
+		if (![[file lowercaseString] hasSuffix:@"gba"])
+		{
+			hasROMs = YES;
+			break;
+		}
+		if (![[file lowercaseString] hasSuffix:@"gb"])
 		{
 			hasROMs = YES;
 			break;

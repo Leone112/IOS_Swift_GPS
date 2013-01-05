@@ -65,6 +65,7 @@
 	_path = [path copy];
 	[old release];
 
+	[self reloadData];
 	[self.tableView reloadData];
 }
 
@@ -112,7 +113,9 @@
 			{
 				if (!strcasecmp(fn + (strlen(fn) - 4), ".zip"))
 					[_files addObject:file];
-				if (!strcasecmp(fn + (strlen(fn) - 4), ".gba"))
+				else if (!strcasecmp(fn + (strlen(fn) - 4), ".gba"))
+					[_files addObject:file];
+				else if (!strcasecmp(fn + (strlen(fn) - 3), ".gb"))
 					[_files addObject:file];
 			}
 		}

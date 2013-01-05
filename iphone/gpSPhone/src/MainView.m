@@ -570,7 +570,7 @@ void gotoMenu()
 
 		case (CUR_PREFERENCES):
 			[ navItem setTitle:@"Settings" ];
-			[ navBar showButtonsWithLeftTitle:@"Back" rightTitle:@"Support" leftBack:YES ];
+			[ navBar showButtonsWithLeftTitle:@"Back" rightTitle:nil leftBack:YES ];
 			break;
 
 		case (CUR_BROWSER):
