@@ -31,7 +31,6 @@ enum {
 	badROMSheetTag,
 	saveStateSheetTag,
 	selectROMSheetTag,
-	supportSheetTag
 };
 
 char __savefileName[512];
@@ -133,18 +132,9 @@ void gotoMenu()
 
 - (void)actionSheet:(UIActionSheet *)sheet clickedButtonAtIndex:(NSInteger)button
 {
-	if (sheet.tag == supportSheetTag)
-	{
-		if ( button == 1 )
-		{
-			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.zodttd.com"]];
-		}
-		else if ( button == 2 )
-		{
-			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.modmyifone.com/forums/?styleid=3"]];
-		}
-	}
-	else if (sheet.tag == saveStateSheetTag)
+	button++;
+
+	if (sheet.tag == saveStateSheetTag)
 	{
 		LOGDEBUG("alertSheet:buttonClicked(): saveStateSheet %d", button);
 		if (button == 1)
@@ -303,10 +293,12 @@ void gotoMenu()
 
 - (void) fileBrowser:(FileBrowser *)browser fileSelected:(NSString *)file
 {
-	m_currentFile = [ file copy ];
+	m_currentFile = [ [ [ browser path ] stringByAppendingPathComponent: file ] copy ];
 	BOOL bookmarked = [ self isBookmarked:file ];
 
 	UIActionSheet *selectROMSheet = [ [ UIActionSheet alloc ] init ];
+	selectROMSheet.tag = selectROMSheetTag;
+
 	[ selectROMSheet setTitle:[NSString stringWithFormat:@"%@\n%@", [ file lastPathComponent ], @"Please select an action:" ] ];
 	if ([ [ file pathExtension ] isEqualToString:@"svs" ])
 	{
@@ -463,7 +455,6 @@ void gotoMenu()
 			rename("/tmp/gpSPhone.history", "/var/root/Library/Preferences/gpSPhone.history");
 			free(t);
 		}
-
 		currentView = CUR_EMULATOR;
 		[ transitionView transition:1 toView:emuView ];
 		[ self startEmulator ];

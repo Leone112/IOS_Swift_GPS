@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#import "common.h"
 
 #define arm_decode_data_proc_reg()                                            \
   u32 rn = (opcode >> 16) & 0x0F;                                             \
@@ -155,30 +156,4 @@ u32 print_disasm_arm_instruction(u32 opcode)
 {
   u32 condition = opcode >> 28;
 
-  switch((opcode >> 25) & 0x07)
-  {
-    // Data processing reg, multiply, bx, memory transfer half/byte, swap,
-    // PSR reg
-    case 0x0:
-
-    // Data processing imm, PSR imm
-    case 0x1:
-
-    // Memory transfer imm
-    case 0x2:
-
-    // Memory transfer reg, undefined
-    case 0x3:
-
-    // Block memory transfer
-    case 0x4:
-
-    // Branch
-    case 0x5:
-
-    // Coprocessor
-    case 0x6:
-
-    // Coprocessor, SWI
-    case 0x7:
-  }
+}
